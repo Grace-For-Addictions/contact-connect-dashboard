@@ -1,6 +1,9 @@
 import Dashboard from './pages/Dashboard';
 import Participants from './pages/Participants';
 import AddParticipant from './pages/AddParticipant';
+import Interactions from './pages/Interactions';
+import GroupSessions from './pages/GroupSessions';
+import GoalsMilestones from './pages/GoalsMilestones';
 import __Layout from './Layout.jsx';
 
 
@@ -8,6 +11,9 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Participants": Participants,
     "AddParticipant": AddParticipant,
+    "Interactions": Interactions,
+    "GroupSessions": GroupSessions,
+    "GoalsMilestones": GoalsMilestones,
 }
 
 export const pagesConfig = {
