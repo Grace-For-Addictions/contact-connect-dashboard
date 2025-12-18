@@ -7,6 +7,9 @@ import GoalsMilestones from './pages/GoalsMilestones';
 import NewInteraction from './pages/NewInteraction';
 import CheckIns from './pages/CheckIns';
 import RecoveryCapitalPage from './pages/RecoveryCapitalPage';
+import Referrals from './pages/Referrals';
+import StrengthQuizzes from './pages/StrengthQuizzes';
+import Surveys from './pages/Surveys';
 import __Layout from './Layout.jsx';
 
 
@@ -20,6 +23,9 @@ export const PAGES = {
     "NewInteraction": NewInteraction,
     "CheckIns": CheckIns,
     "RecoveryCapitalPage": RecoveryCapitalPage,
+    "Referrals": Referrals,
+    "StrengthQuizzes": StrengthQuizzes,
+    "Surveys": Surveys,
 }
 
 export const pagesConfig = {
