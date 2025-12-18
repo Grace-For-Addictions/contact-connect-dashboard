@@ -10,6 +10,9 @@ import RecoveryCapitalPage from './pages/RecoveryCapitalPage';
 import Referrals from './pages/Referrals';
 import StrengthQuizzes from './pages/StrengthQuizzes';
 import Surveys from './pages/Surveys';
+import Affirmations from './pages/Affirmations';
+import RecoveryTracker from './pages/RecoveryTracker';
+import Reports from './pages/Reports';
 import __Layout from './Layout.jsx';
 
 
@@ -26,6 +29,9 @@ export const PAGES = {
     "Referrals": Referrals,
     "StrengthQuizzes": StrengthQuizzes,
     "Surveys": Surveys,
+    "Affirmations": Affirmations,
+    "RecoveryTracker": RecoveryTracker,
+    "Reports": Reports,
 }
 
 export const pagesConfig = {
