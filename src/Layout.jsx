@@ -51,7 +51,7 @@ export default function Layout({ children, currentPageName }) {
       icon: MessageSquare,
       children: [
         { name: 'All Interactions', page: 'Interactions' },
-        { name: 'Log Interaction', page: 'LogInteraction' },
+        { name: 'Log Interaction', page: 'NewInteraction' },
         { name: 'Group Sessions', page: 'GroupSessions' },
       ]
     },

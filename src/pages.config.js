@@ -13,6 +13,7 @@ import Surveys from './pages/Surveys';
 import Affirmations from './pages/Affirmations';
 import RecoveryTracker from './pages/RecoveryTracker';
 import Reports from './pages/Reports';
+import ParticipantDetail from './pages/ParticipantDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +33,7 @@ export const PAGES = {
     "Affirmations": Affirmations,
     "RecoveryTracker": RecoveryTracker,
     "Reports": Reports,
+    "ParticipantDetail": ParticipantDetail,
 }
 
 export const pagesConfig = {
