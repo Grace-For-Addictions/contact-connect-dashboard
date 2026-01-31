@@ -65,6 +65,8 @@ import StrengthQuizzes from './pages/StrengthQuizzes';
 import Surveys from './pages/Surveys';
 import CommunityResources from './pages/CommunityResources';
 import CoachTraining from './pages/CoachTraining';
+import ProgressReviews from './pages/ProgressReviews';
+import EditProgressReview from './pages/EditProgressReview';
 import __Layout from './Layout.jsx';
 
 
@@ -87,6 +89,8 @@ export const PAGES = {
     "Surveys": Surveys,
     "CommunityResources": CommunityResources,
     "CoachTraining": CoachTraining,
+    "ProgressReviews": ProgressReviews,
+    "EditProgressReview": EditProgressReview,
 }
 
 export const pagesConfig = {

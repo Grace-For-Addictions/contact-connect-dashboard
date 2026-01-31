@@ -75,6 +75,7 @@ export default function Layout({ children, currentPageName }) {
     },
     { name: 'Referrals', page: 'Referrals', icon: Compass },
     { name: 'Resources', page: 'CommunityResources', icon: Heart },
+    { name: 'Progress Reviews', page: 'ProgressReviews', icon: FileText },
     { name: 'Coach Training', page: 'CoachTraining', icon: Sparkles },
     { name: 'Reports', page: 'Reports', icon: BarChart3 },
   ];
