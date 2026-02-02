@@ -50,23 +50,23 @@
 import AddParticipant from './pages/AddParticipant';
 import Affirmations from './pages/Affirmations';
 import CheckIns from './pages/CheckIns';
+import CoachTraining from './pages/CoachTraining';
+import CommunityResources from './pages/CommunityResources';
 import Dashboard from './pages/Dashboard';
+import EditProgressReview from './pages/EditProgressReview';
 import GoalsMilestones from './pages/GoalsMilestones';
 import GroupSessions from './pages/GroupSessions';
 import Interactions from './pages/Interactions';
 import NewInteraction from './pages/NewInteraction';
 import ParticipantDetail from './pages/ParticipantDetail';
 import Participants from './pages/Participants';
+import ProgressReviews from './pages/ProgressReviews';
 import RecoveryCapitalPage from './pages/RecoveryCapitalPage';
 import RecoveryTracker from './pages/RecoveryTracker';
 import Referrals from './pages/Referrals';
 import Reports from './pages/Reports';
 import StrengthQuizzes from './pages/StrengthQuizzes';
 import Surveys from './pages/Surveys';
-import CommunityResources from './pages/CommunityResources';
-import CoachTraining from './pages/CoachTraining';
-import ProgressReviews from './pages/ProgressReviews';
-import EditProgressReview from './pages/EditProgressReview';
 import __Layout from './Layout.jsx';
 
 
@@ -74,23 +74,23 @@ export const PAGES = {
     "AddParticipant": AddParticipant,
     "Affirmations": Affirmations,
     "CheckIns": CheckIns,
+    "CoachTraining": CoachTraining,
+    "CommunityResources": CommunityResources,
     "Dashboard": Dashboard,
+    "EditProgressReview": EditProgressReview,
     "GoalsMilestones": GoalsMilestones,
     "GroupSessions": GroupSessions,
     "Interactions": Interactions,
     "NewInteraction": NewInteraction,
     "ParticipantDetail": ParticipantDetail,
     "Participants": Participants,
+    "ProgressReviews": ProgressReviews,
     "RecoveryCapitalPage": RecoveryCapitalPage,
     "RecoveryTracker": RecoveryTracker,
     "Referrals": Referrals,
     "Reports": Reports,
     "StrengthQuizzes": StrengthQuizzes,
     "Surveys": Surveys,
-    "CommunityResources": CommunityResources,
-    "CoachTraining": CoachTraining,
-    "ProgressReviews": ProgressReviews,
-    "EditProgressReview": EditProgressReview,
 }
 
 export const pagesConfig = {
