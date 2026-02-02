@@ -230,8 +230,14 @@ export default function NewInteraction() {
               <Textarea value={formData.goals_discussed} onChange={(e) => handleChange('goals_discussed', e.target.value)} rows={2} placeholder="What goals were discussed during this session?" />
             </div>
             <div>
-              <Label>Progress Notes</Label>
-              <Textarea value={formData.progress_notes} onChange={(e) => handleChange('progress_notes', e.target.value)} rows={4} placeholder="Document session notes and participant progress..." />
+              <GracefulTextarea
+                label="Progress Notes"
+                value={formData.progress_notes}
+                onChange={(e) => handleChange('progress_notes', e.target.value)}
+                rows={4}
+                placeholder="Document session notes and participant progress..."
+                enableAI={true}
+              />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>

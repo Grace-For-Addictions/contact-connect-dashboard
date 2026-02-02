@@ -173,12 +173,24 @@ export default function CheckIns() {
 
               <div className="space-y-4">
                 <div>
-                  <Label>Highlights This Period</Label>
-                  <Textarea value={formData.highlights} onChange={(e) => setFormData(prev => ({ ...prev, highlights: e.target.value }))} rows={2} placeholder="What went well?" />
+                  <GracefulTextarea
+                    label="Highlights This Period"
+                    value={formData.highlights}
+                    onChange={(e) => setFormData(prev => ({ ...prev, highlights: e.target.value }))}
+                    rows={2}
+                    placeholder="What went well?"
+                    enableAI={true}
+                  />
                 </div>
                 <div>
-                  <Label>Challenges Faced</Label>
-                  <Textarea value={formData.challenges} onChange={(e) => setFormData(prev => ({ ...prev, challenges: e.target.value }))} rows={2} placeholder="What challenges did they encounter?" />
+                  <GracefulTextarea
+                    label="Challenges Faced"
+                    value={formData.challenges}
+                    onChange={(e) => setFormData(prev => ({ ...prev, challenges: e.target.value }))}
+                    rows={2}
+                    placeholder="What challenges did they encounter?"
+                    enableAI={true}
+                  />
                 </div>
                 <div>
                   <Label>Goals Progress</Label>

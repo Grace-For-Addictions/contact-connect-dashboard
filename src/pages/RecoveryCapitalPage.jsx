@@ -12,7 +12,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Legend } from 'recharts';
-import { Plus, TrendingUp, Users, Heart, Home, Briefcase, Calendar } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus, TrendingUp, Users, Heart, Home, Briefcase, Calendar, Flower2 } from 'lucide-react';
+import BARC10Garden from '../components/recovery/BARC10Garden';
 
 export default function RecoveryCapitalPage() {
   const queryClient = useQueryClient();
@@ -196,25 +198,56 @@ export default function RecoveryCapitalPage() {
         </Dialog>
       </div>
 
-      {/* Overview Chart */}
+      {/* Visualization Tabs */}
       {radarData.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Average Recovery Capital Overview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadarChart data={radarData}>
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12 }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 10]} />
-                  <Radar name="Average Score" dataKey="A" stroke="#5B9A9A" fill="#5B9A9A" fillOpacity={0.3} />
-                </RadarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="radar" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="radar">
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Radar Chart
+            </TabsTrigger>
+            <TabsTrigger value="garden">
+              <Flower2 className="w-4 h-4 mr-2" />
+              Garden View
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="radar" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Average Recovery Capital Overview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart data={radarData}>
+                      <PolarGrid />
+                      <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12 }} />
+                      <PolarRadiusAxis angle={30} domain={[0, 10]} />
+                      <Radar name="Average Score" dataKey="A" stroke="#5B9A9A" fill="#5B9A9A" fillOpacity={0.3} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="garden" className="mt-6">
+            {selectedParticipant !== 'all' ? (
+              <BARC10Garden 
+                assessments={filteredAssessments}
+                participantName={participants.find(p => p.id === selectedParticipant)?.first_name + ' ' + participants.find(p => p.id === selectedParticipant)?.last_name}
+              />
+            ) : (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <Flower2 className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+                  <p className="text-slate-500">Select a specific participant to view their recovery garden</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
       )}
 
       {/* Filter */}
