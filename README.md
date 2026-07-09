@@ -49,3 +49,24 @@ garden and a Des Moines resource map.
 (`db.entities.<Name>.list/filter/create/update/get/delete`, `db.auth`,
 `db.integrations`, `db.appLogs`). Reads return `[]` gracefully when a table or
 key is missing, so the UI renders empty states rather than throwing.
+
+## Deploy
+The app is a static Vite build that talks to Supabase from the browser, so any
+static host works. The Supabase URL and publishable key are baked in as
+fallbacks, so **no environment variables are required** for a basic deploy.
+
+**Cloudflare Pages (recommended)** — Pages → *Create* → *Connect to Git* → this
+repo. Settings:
+- Framework preset: **Vite**
+- Build command: `npm run build`
+- Build output directory: `dist`
+- (Optional) override `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` in the
+  project's environment variables to point at a different project.
+
+Vercel and Netlify work identically (build `npm run build`, output `dist`);
+`public/_redirects` provides SPA fallback.
+
+**Security before real data:** the deployed publishable key + permissive RLS
+means anyone can read/write the demo tables. That's fine for prototype testing.
+Before real participant data, apply `supabase/migrations/0002_harden_rls.sql`
+and wire a login flow in `src/lib/AuthContext.jsx`.

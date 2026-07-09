@@ -6,14 +6,23 @@
  * db.auth.me/logout, db.integrations.Core.*, db.appLogs) so existing pages
  * keep working, but every call is served by Supabase.
  *
- * Config comes from Vite env (see .env.example):
+ * Config comes from Vite env (see .env.example), with built-in fallbacks so a
+ * plain `npm run build` deploys anywhere with zero env config:
  *   VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+ *
+ * The fallback anon key below is a Supabase *publishable* key — it is designed
+ * to be public and already ships in the client bundle, so committing it is
+ * expected. Access is governed by Row Level Security, NOT by hiding this key:
+ * the current RLS is permissive (prototype). Apply
+ * supabase/migrations/0002_harden_rls.sql and a login flow before real data.
  */
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL =
   import.meta.env.VITE_SUPABASE_URL || 'https://yqonwnzqtgmnoiymkefk.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const SUPABASE_ANON_KEY =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  'sb_publishable_FFANoT7uKT8KWdumUeTsMw_ets7uvgE';
 
 export const isConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
