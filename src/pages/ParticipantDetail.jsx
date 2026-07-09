@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -30,7 +30,7 @@ export default function ParticipantDetail() {
   const { data: participant, isLoading } = useQuery({
     queryKey: ['participant', participantId],
     queryFn: async () => {
-      const participants = await base44.entities.Participant.filter({ id: participantId });
+      const participants = await db.entities.Participant.filter({ id: participantId });
       return participants[0];
     },
     enabled: !!participantId,
@@ -38,30 +38,30 @@ export default function ParticipantDetail() {
 
   const { data: interactions = [] } = useQuery({
     queryKey: ['participantInteractions', participantId],
-    queryFn: () => base44.entities.Interaction.filter({ participant_id: participantId }, '-date'),
+    queryFn: () => db.entities.Interaction.filter({ participant_id: participantId }, '-date'),
     enabled: !!participantId,
   });
 
   const { data: goals = [] } = useQuery({
     queryKey: ['participantGoals', participantId],
-    queryFn: () => base44.entities.Goal.filter({ participant_id: participantId }),
+    queryFn: () => db.entities.Goal.filter({ participant_id: participantId }),
     enabled: !!participantId,
   });
 
   const { data: milestones = [] } = useQuery({
     queryKey: ['participantMilestones', participantId],
-    queryFn: () => base44.entities.Milestone.filter({ participant_id: participantId }, '-date_achieved'),
+    queryFn: () => db.entities.Milestone.filter({ participant_id: participantId }, '-date_achieved'),
     enabled: !!participantId,
   });
 
   const { data: checkIns = [] } = useQuery({
     queryKey: ['participantCheckIns', participantId],
-    queryFn: () => base44.entities.CheckIn.filter({ participant_id: participantId }, '-date'),
+    queryFn: () => db.entities.CheckIn.filter({ participant_id: participantId }, '-date'),
     enabled: !!participantId,
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data) => base44.entities.Participant.update(participantId, data),
+    mutationFn: (data) => db.entities.Participant.update(participantId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['participant', participantId] });
       setEditing(false);

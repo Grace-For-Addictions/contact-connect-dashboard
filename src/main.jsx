@@ -1,13 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from '@/App.jsx'
+import RoomHost from '@/shell/RoomHost'
 import '@/index.css'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  // <React.StrictMode>
-  <App />
-  // </React.StrictMode>,
-)
+// The VRCC shell (index.html + /vrcc-*.js) owns spatial navigation. React
+// mounts into the room scene and renders the live page behind whichever door
+// the visitor opens.
+const mount = document.getElementById('react-room')
+if (mount) {
+  ReactDOM.createRoot(mount).render(<RoomHost />)
+}
 
 if (import.meta.hot) {
   import.meta.hot.on('vite:beforeUpdate', () => {
@@ -17,6 +19,3 @@ if (import.meta.hot) {
     window.parent?.postMessage({ type: 'sandbox:afterUpdate' }, '*');
   });
 }
-
-
-

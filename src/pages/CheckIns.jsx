@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Input } from "@/components/ui/input";
@@ -40,16 +40,16 @@ export default function CheckIns() {
   });
 
   useEffect(() => {
-    base44.entities.Participant.filter({ status: 'Active' }).then(setParticipants);
+    db.entities.Participant.filter({ status: 'Active' }).then(setParticipants);
   }, []);
 
   const { data: checkIns = [], isLoading } = useQuery({
     queryKey: ['checkIns'],
-    queryFn: () => base44.entities.CheckIn.list('-date'),
+    queryFn: () => db.entities.CheckIn.list('-date'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.CheckIn.create(data),
+    mutationFn: (data) => db.entities.CheckIn.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['checkIns'] });
       setDialogOpen(false);

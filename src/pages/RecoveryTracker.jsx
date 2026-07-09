@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 import { differenceInDays, format, subDays, addDays } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,17 +14,17 @@ export default function RecoveryTracker() {
 
   const { data: participants = [] } = useQuery({
     queryKey: ['participants'],
-    queryFn: () => base44.entities.Participant.list(),
+    queryFn: () => db.entities.Participant.list(),
   });
 
   const { data: checkIns = [] } = useQuery({
     queryKey: ['checkIns'],
-    queryFn: () => base44.entities.CheckIn.list('-date'),
+    queryFn: () => db.entities.CheckIn.list('-date'),
   });
 
   const { data: milestones = [] } = useQuery({
     queryKey: ['milestones'],
-    queryFn: () => base44.entities.Milestone.list('-date_achieved'),
+    queryFn: () => db.entities.Milestone.list('-date_achieved'),
   });
 
   const filteredParticipants = selectedParticipant === 'all'

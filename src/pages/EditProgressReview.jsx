@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -27,7 +27,7 @@ export default function EditProgressReview() {
   const { data: review, isLoading } = useQuery({
     queryKey: ['progressReview', reviewId],
     queryFn: async () => {
-      const reviews = await base44.entities.ProgressReview.list();
+      const reviews = await db.entities.ProgressReview.list();
       return reviews.find(r => r.id === reviewId);
     },
     enabled: !!reviewId,
@@ -41,7 +41,7 @@ export default function EditProgressReview() {
   }, [review]);
 
   const updateReviewMutation = useMutation({
-    mutationFn: (data) => base44.entities.ProgressReview.update(reviewId, data),
+    mutationFn: (data) => db.entities.ProgressReview.update(reviewId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['progressReview', reviewId] });
       queryClient.invalidateQueries({ queryKey: ['progressReviews'] });
@@ -50,7 +50,7 @@ export default function EditProgressReview() {
   });
 
   const handleSaveDraft = async () => {
-    const user = await base44.auth.me();
+    const user = await db.auth.me();
     await updateReviewMutation.mutateAsync({
       coach_edited_summary: editedSummary,
       coach_notes: coachNotes,
@@ -59,7 +59,7 @@ export default function EditProgressReview() {
   };
 
   const handleFinalize = async () => {
-    const user = await base44.auth.me();
+    const user = await db.auth.me();
     await updateReviewMutation.mutateAsync({
       coach_edited_summary: editedSummary,
       coach_notes: coachNotes,

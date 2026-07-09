@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { Input } from "@/components/ui/input";
@@ -42,8 +42,8 @@ export default function NewInteraction() {
   });
 
   useEffect(() => {
-    base44.entities.Participant.filter({ status: 'Active' }).then(setParticipants);
-    base44.auth.me().then(u => {
+    db.entities.Participant.filter({ status: 'Active' }).then(setParticipants);
+    db.auth.me().then(u => {
       setUser(u);
       setFormData(prev => ({
         ...prev,
@@ -79,7 +79,7 @@ export default function NewInteraction() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    await base44.entities.Interaction.create(formData);
+    await db.entities.Interaction.create(formData);
     navigate(createPageUrl('Interactions'));
   };
 

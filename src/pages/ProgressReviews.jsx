@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -18,12 +18,12 @@ export default function ProgressReviews() {
 
   const { data: reviews = [] } = useQuery({
     queryKey: ['progressReviews'],
-    queryFn: () => base44.entities.ProgressReview.list('-created_date'),
+    queryFn: () => db.entities.ProgressReview.list('-created_date'),
   });
 
   const { data: participants = [] } = useQuery({
     queryKey: ['participants'],
-    queryFn: () => base44.entities.Participant.list(),
+    queryFn: () => db.entities.Participant.list(),
   });
 
   const generateMonthlyReview = async (participantId) => {
@@ -36,10 +36,10 @@ export default function ProgressReviews() {
 
       // Fetch all relevant data for the participant
       const [checkIns, goals, recoveryCapital, interactions] = await Promise.all([
-        base44.entities.CheckIn.filter({ participant_id: participantId }),
-        base44.entities.Goal.filter({ participant_id: participantId }),
-        base44.entities.RecoveryCapital.filter({ participant_id: participantId }),
-        base44.entities.Interaction.filter({ participant_id: participantId })
+        db.entities.CheckIn.filter({ participant_id: participantId }),
+        db.entities.Goal.filter({ participant_id: participantId }),
+        db.entities.RecoveryCapital.filter({ participant_id: participantId }),
+        db.entities.Interaction.filter({ participant_id: participantId })
       ]);
 
       // Filter data by period
@@ -103,7 +103,7 @@ Generate a comprehensive monthly review in JSON format with:
 
 Use "person in recovery" language, celebrate small wins, and frame challenges with grace.`;
 
-      const aiResponse = await base44.integrations.Core.InvokeLLM({
+      const aiResponse = await db.integrations.Core.InvokeLLM({
         prompt: prompt,
         response_json_schema: {
           type: "object",
@@ -118,8 +118,8 @@ Use "person in recovery" language, celebrate small wins, and frame challenges wi
       });
 
       // Create the review
-      const user = await base44.auth.me();
-      await base44.entities.ProgressReview.create({
+      const user = await db.auth.me();
+      await db.entities.ProgressReview.create({
         participant_id: participantId,
         participant_name: `${participant.first_name} ${participant.last_name}`,
         review_period_start: periodStart.toISOString().split('T')[0],

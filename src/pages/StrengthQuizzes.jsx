@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Input } from "@/components/ui/input";
@@ -50,16 +50,16 @@ export default function StrengthQuizzes() {
   });
 
   useEffect(() => {
-    base44.entities.Participant.list().then(setParticipants);
+    db.entities.Participant.list().then(setParticipants);
   }, []);
 
   const { data: assessments = [], isLoading } = useQuery({
     queryKey: ['strengthAssessments'],
-    queryFn: () => base44.entities.StrengthAssessment.list('-assessment_date'),
+    queryFn: () => db.entities.StrengthAssessment.list('-assessment_date'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.StrengthAssessment.create(data),
+    mutationFn: (data) => db.entities.StrengthAssessment.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['strengthAssessments'] });
       setDialogOpen(false);

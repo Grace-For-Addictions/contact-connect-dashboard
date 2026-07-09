@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Input } from "@/components/ui/input";
@@ -39,16 +39,16 @@ export default function Surveys() {
   });
 
   useEffect(() => {
-    base44.entities.Participant.list().then(setParticipants);
+    db.entities.Participant.list().then(setParticipants);
   }, []);
 
   const { data: surveys = [], isLoading } = useQuery({
     queryKey: ['surveys'],
-    queryFn: () => base44.entities.Survey.list('-date_completed'),
+    queryFn: () => db.entities.Survey.list('-date_completed'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Survey.create(data),
+    mutationFn: (data) => db.entities.Survey.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['surveys'] });
       setDialogOpen(false);

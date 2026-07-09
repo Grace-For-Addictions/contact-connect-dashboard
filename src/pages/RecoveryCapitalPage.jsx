@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Input } from "@/components/ui/input";
@@ -42,18 +42,18 @@ export default function RecoveryCapitalPage() {
   });
 
   useEffect(() => {
-    base44.entities.Participant.list().then(setParticipants);
+    db.entities.Participant.list().then(setParticipants);
   }, []);
 
   const { data: assessments = [], isLoading } = useQuery({
     queryKey: ['recoveryCapital'],
-    queryFn: () => base44.entities.RecoveryCapital.list('-assessment_date'),
+    queryFn: () => db.entities.RecoveryCapital.list('-assessment_date'),
   });
 
   const createMutation = useMutation({
     mutationFn: (data) => {
       const total = data.social_capital + data.physical_capital + data.human_capital + data.cultural_capital + data.community_capital;
-      return base44.entities.RecoveryCapital.create({ ...data, total_score: total });
+      return db.entities.RecoveryCapital.create({ ...data, total_score: total });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recoveryCapital'] });

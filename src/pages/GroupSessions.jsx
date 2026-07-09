@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Input } from "@/components/ui/input";
@@ -34,11 +34,11 @@ export default function GroupSessions() {
 
   const { data: sessions = [], isLoading } = useQuery({
     queryKey: ['groupSessions'],
-    queryFn: () => base44.entities.GroupSession.list('-date'),
+    queryFn: () => db.entities.GroupSession.list('-date'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.GroupSession.create(data),
+    mutationFn: (data) => db.entities.GroupSession.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groupSessions'] });
       setDialogOpen(false);

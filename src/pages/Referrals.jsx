@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Input } from "@/components/ui/input";
@@ -37,16 +37,16 @@ export default function Referrals() {
   });
 
   useEffect(() => {
-    base44.entities.Participant.list().then(setParticipants);
+    db.entities.Participant.list().then(setParticipants);
   }, []);
 
   const { data: referrals = [], isLoading } = useQuery({
     queryKey: ['referrals'],
-    queryFn: () => base44.entities.Referral.list('-referral_date'),
+    queryFn: () => db.entities.Referral.list('-referral_date'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Referral.create(data),
+    mutationFn: (data) => db.entities.Referral.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['referrals'] });
       setDialogOpen(false);
@@ -60,7 +60,7 @@ export default function Referrals() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Referral.update(id, data),
+    mutationFn: ({ id, data }) => db.entities.Referral.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['referrals'] }),
   });
 

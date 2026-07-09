@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -63,16 +63,16 @@ export default function Affirmations() {
   });
 
   useEffect(() => {
-    base44.entities.Participant.list().then(setParticipants);
+    db.entities.Participant.list().then(setParticipants);
   }, []);
 
   const { data: affirmations = [], isLoading } = useQuery({
     queryKey: ['affirmations'],
-    queryFn: () => base44.entities.Affirmation.list('-created_date'),
+    queryFn: () => db.entities.Affirmation.list('-created_date'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Affirmation.create(data),
+    mutationFn: (data) => db.entities.Affirmation.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['affirmations'] });
       setDialogOpen(false);
@@ -84,12 +84,12 @@ export default function Affirmations() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Affirmation.delete(id),
+    mutationFn: (id) => db.entities.Affirmation.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['affirmations'] }),
   });
 
   const toggleFavorite = useMutation({
-    mutationFn: ({ id, is_favorite }) => base44.entities.Affirmation.update(id, { is_favorite }),
+    mutationFn: ({ id, is_favorite }) => db.entities.Affirmation.update(id, { is_favorite }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['affirmations'] }),
   });
 

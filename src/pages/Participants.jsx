@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -25,7 +25,7 @@ export default function Participants() {
 
   const { data: participants = [], isLoading } = useQuery({
     queryKey: ['participants'],
-    queryFn: () => base44.entities.Participant.list('-created_date'),
+    queryFn: () => db.entities.Participant.list('-created_date'),
   });
 
   const filteredParticipants = participants.filter(p => {

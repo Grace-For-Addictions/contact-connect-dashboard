@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { Input } from "@/components/ui/input";
@@ -49,7 +49,7 @@ export default function AddParticipant() {
   });
 
   useEffect(() => {
-    base44.entities.User.list().then(setStaff);
+    db.entities.User.list().then(setStaff);
   }, []);
 
   const handleChange = (field, value) => {
@@ -68,7 +68,7 @@ export default function AddParticipant() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    await base44.entities.Participant.create(formData);
+    await db.entities.Participant.create(formData);
     navigate(createPageUrl('Participants'));
   };
 

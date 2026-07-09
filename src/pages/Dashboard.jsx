@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 import { format, subDays, startOfMonth, endOfMonth, differenceInDays } from 'date-fns';
 import { Users, MessageSquare, Target, Award, TrendingUp, Calendar, Heart, Sparkles } from 'lucide-react';
@@ -15,27 +15,27 @@ export default function Dashboard() {
 
   const { data: participants = [] } = useQuery({
     queryKey: ['participants'],
-    queryFn: () => base44.entities.Participant.list(),
+    queryFn: () => db.entities.Participant.list(),
   });
 
   const { data: interactions = [] } = useQuery({
     queryKey: ['interactions'],
-    queryFn: () => base44.entities.Interaction.list('-date', 100),
+    queryFn: () => db.entities.Interaction.list('-date', 100),
   });
 
   const { data: goals = [] } = useQuery({
     queryKey: ['goals'],
-    queryFn: () => base44.entities.Goal.list(),
+    queryFn: () => db.entities.Goal.list(),
   });
 
   const { data: milestones = [] } = useQuery({
     queryKey: ['milestones'],
-    queryFn: () => base44.entities.Milestone.list('-date_achieved', 50),
+    queryFn: () => db.entities.Milestone.list('-date_achieved', 50),
   });
 
   const { data: checkIns = [] } = useQuery({
     queryKey: ['checkIns'],
-    queryFn: () => base44.entities.CheckIn.list('-date', 50),
+    queryFn: () => db.entities.CheckIn.list('-date', 50),
   });
 
   // Calculate stats

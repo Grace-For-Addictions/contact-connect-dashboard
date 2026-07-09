@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import {
   LayoutDashboard,
   Users,
@@ -32,7 +32,7 @@ export default function Layout({ children, currentPageName }) {
   const [expandedSection, setExpandedSection] = useState(null);
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
+    db.auth.me().then(setUser).catch(() => {});
   }, []);
 
   const navigation = [
@@ -81,7 +81,7 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const handleLogout = () => {
-    base44.auth.logout();
+    db.auth.logout();
   };
 
   return (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,22 +24,22 @@ export default function CoachTraining() {
   const queryClient = useQueryClient();
 
   React.useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
+    db.auth.me().then(setUser).catch(() => {});
   }, []);
 
   const { data: trainingRecords = [] } = useQuery({
     queryKey: ['coachTraining', user?.id],
-    queryFn: () => base44.entities.CoachTraining.filter({ coach_id: user?.id }),
+    queryFn: () => db.entities.CoachTraining.filter({ coach_id: user?.id }),
     enabled: !!user?.id,
   });
 
   const { data: interactions = [] } = useQuery({
     queryKey: ['interactions'],
-    queryFn: () => base44.entities.Interaction.list(),
+    queryFn: () => db.entities.Interaction.list(),
   });
 
   const createTrainingMutation = useMutation({
-    mutationFn: (data) => base44.entities.CoachTraining.create(data),
+    mutationFn: (data) => db.entities.CoachTraining.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coachTraining'] });
       toast.success('Training record saved');
@@ -67,7 +67,7 @@ Provide practical, evidence-based guidance that includes:
 
 Keep your response conversational, supportive, and actionable.`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
+      const response = await db.integrations.Core.InvokeLLM({
         prompt: prompt
       });
 
@@ -92,7 +92,7 @@ Keep your response conversational, supportive, and actionable.`;
 
 Make it detailed enough for a coach to practice applying intervention strategies. Return as JSON with fields: participant_name, background, current_challenge, context.`;
 
-      const scenario = await base44.integrations.Core.InvokeLLM({
+      const scenario = await db.integrations.Core.InvokeLLM({
         prompt: prompt,
         response_json_schema: {
           type: "object",
@@ -139,7 +139,7 @@ Provide constructive feedback in JSON format with:
 
 Evaluate based on trauma-informed care, motivational interviewing, boundary-setting, and evidence-based practices.`;
 
-      const feedback = await base44.integrations.Core.InvokeLLM({
+      const feedback = await db.integrations.Core.InvokeLLM({
         prompt: prompt,
         response_json_schema: {
           type: "object",
@@ -209,7 +209,7 @@ Generate a personalized 30-day training plan with:
 
 Return as JSON with: priority_areas (array), weekly_goals (array of 4 weeks), resources (array), expected_outcomes (string)`;
 
-      const plan = await base44.integrations.Core.InvokeLLM({
+      const plan = await db.integrations.Core.InvokeLLM({
         prompt: prompt,
         response_json_schema: {
           type: "object",

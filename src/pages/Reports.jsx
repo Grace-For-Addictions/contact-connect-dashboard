@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter, startOfYear, endOfYear, subDays, differenceInDays } from 'date-fns';
 import { Input } from "@/components/ui/input";
@@ -24,37 +24,37 @@ export default function Reports() {
 
   const { data: participants = [] } = useQuery({
     queryKey: ['participants'],
-    queryFn: () => base44.entities.Participant.list(),
+    queryFn: () => db.entities.Participant.list(),
   });
 
   const { data: interactions = [] } = useQuery({
     queryKey: ['interactions'],
-    queryFn: () => base44.entities.Interaction.list(),
+    queryFn: () => db.entities.Interaction.list(),
   });
 
   const { data: goals = [] } = useQuery({
     queryKey: ['goals'],
-    queryFn: () => base44.entities.Goal.list(),
+    queryFn: () => db.entities.Goal.list(),
   });
 
   const { data: milestones = [] } = useQuery({
     queryKey: ['milestones'],
-    queryFn: () => base44.entities.Milestone.list(),
+    queryFn: () => db.entities.Milestone.list(),
   });
 
   const { data: checkIns = [] } = useQuery({
     queryKey: ['checkIns'],
-    queryFn: () => base44.entities.CheckIn.list(),
+    queryFn: () => db.entities.CheckIn.list(),
   });
 
   const { data: surveys = [] } = useQuery({
     queryKey: ['surveys'],
-    queryFn: () => base44.entities.Survey.list(),
+    queryFn: () => db.entities.Survey.list(),
   });
 
   const { data: referrals = [] } = useQuery({
     queryKey: ['referrals'],
-    queryFn: () => base44.entities.Referral.list(),
+    queryFn: () => db.entities.Referral.list(),
   });
 
   // Date range calculation

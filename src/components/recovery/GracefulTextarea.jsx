@@ -3,7 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { AlertCircle, Sparkles, Check } from 'lucide-react';
 import { debounce } from 'lodash';
 
@@ -85,7 +85,7 @@ Common patterns to watch for:
 
 Return JSON array of suggestions with: original_phrase, suggested_alternative, reason. Only include actual issues found, return empty array if text is appropriate.`;
 
-          const response = await base44.integrations.Core.InvokeLLM({
+          const response = await db.integrations.Core.InvokeLLM({
             prompt: prompt,
             response_json_schema: {
               type: "object",

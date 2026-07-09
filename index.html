@@ -1,14 +1,335 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="https://base44.com/logo_v2.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="manifest" href="/manifest.json" />
-    <title>Base44 APP</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VRCC — Virtual Recovery Community Center</title>
+<meta name="description" content="A place, not an app — the Grace For Addictions Virtual Recovery Community Center." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Albert+Sans:ital,wght@0,300..800;1,300..800&family=Cinzel:wght@400..800&family=Crimson+Pro:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/vrcc.css">
+</head>
+<body>
+<div id="grain" aria-hidden="true"></div>
+<div id="vignette" aria-hidden="true"></div>
+
+<!-- ================= HUD ================= -->
+<header id="hud">
+  <button id="backBtn" class="hud-chip" aria-label="Go back">← Back</button>
+  <div class="hud-chip" id="whereami" aria-live="polite"><span class="dot"></span><span id="whereLabel">Outside the VRCC</span></div>
+  <div class="hud-spacer"></div>
+  <button id="cosmosBtn" class="hud-chip" aria-pressed="false" title="Interstellar dark mode — a safe harbor among the stars">🌌 Cosmos</button>
+  <button id="renewBtn" class="hud-chip" aria-pressed="false" title="Optional faith-based experience — Renewing the Mind (Romans 12:2)">🕊️ Renew</button>
+  <button id="soundBtn" class="hud-chip" aria-pressed="false" title="Ambient sound">🔇 Sound</button>
+  <button id="motionBtn" class="hud-chip" aria-pressed="false" title="Reduce motion">✦ Motion</button>
+  <button id="safeExit" class="hud-chip" title="Leave this site quickly">Safe Exit</button>
+</header>
+
+<nav id="minimap" aria-label="You are here">
+  <h4>You are here</h4>
+  <ol>
+    <li data-mm="arrival">Outside</li>
+    <li data-mm="lobby">Lobby</li>
+    <li data-mm="hallway">Hallway</li>
+    <li data-mm="room">Room</li>
+    <li data-mm="basement">Basement</li>
+    <li data-mm="garden">Garden</li>
+    <li data-mm="city">Des Moines</li>
+  </ol>
+</nav>
+
+<div id="hint" role="status"></div>
+<div id="peek" role="tooltip" aria-hidden="true"></div>
+<div id="toast" role="status"></div>
+
+<!-- ================= SCENE 1 · ARRIVAL ================= -->
+<section class="scene active" id="scene-arrival" aria-label="Arriving outside the Virtual Recovery Community Center">
+  <div class="layer" data-depth="0.012"><div class="stars" id="stars"></div><div class="moon"></div></div>
+  <div class="layer" data-depth="0.02"><div class="clouds" id="clouds"></div></div>
+  <div class="layer" data-depth="0.03"><div class="skyline" id="skyline"></div></div>
+  <div class="ground-ext"></div>
+  <div class="street"></div>
+  <div class="layer" data-depth="0.05">
+    <div class="lamp" style="left:12%"></div>
+    <div class="lamp" style="right:12%"></div>
+    <div class="fireflies" id="fireflies"></div>
+  </div>
+  <div class="arrival-title">
+    <div class="eyebrow">You have arrived</div>
+    <h1>Welcome to the <em>Virtual Recovery<br>Community Center</em></h1>
+    <p>A place — not an app. Come in when you're ready. The lights are on.</p>
+  </div>
+  <div class="layer" data-depth="0.065">
+    <div class="vrcc-building">
+      <div class="vb-roof"></div>
+      <div class="vb-body"></div>
+      <div class="vb-sign"><div class="letters">VRCC</div><div class="sub">Grace For Addictions · Des Moines, Iowa</div></div>
+      <div class="vb-windows" id="vbWindows"></div>
+      <div class="vb-awning"></div>
+      <div class="vb-door-wrap" id="frontDoor" tabindex="0" role="button" aria-label="Open the front door and enter the lobby">
+        <div class="vb-door"><div class="pane"></div></div>
+      </div>
+      <div class="door-label">Enter the front door</div>
+      <div class="vb-steps"><i style="bottom:0;height:34%;left:-6%;right:-6%"></i><i style="bottom:36%;height:32%;left:-3%;right:-3%"></i><i style="bottom:70%;height:30%;left:0;right:0"></i></div>
+    </div>
+  </div>
+  <div class="arrival-actions">
+    <button class="ghost-btn primary" data-go="lobby" data-dir="forward">→ Come inside</button>
+    <button class="ghost-btn" data-go="city" data-dir="forward">View area resources</button>
+  </div>
+</section>
+
+<!-- ================= SCENE 2 · LOBBY ================= -->
+<section class="scene" id="scene-lobby" aria-label="VRCC lobby">
+  <div class="lobby-floor"></div>
+  <div class="lobby-rug"></div>
+  <div class="layer" data-depth="0.015">
+    <div class="lobby-window" style="left:32.5%"><div class="sunray"></div></div>
+    <div class="lobby-window" style="right:32.5%"><div class="sunray"></div></div>
+  </div>
+  <div class="light-shaft" style="left:28%"></div>
+  <div class="light-shaft" style="right:24%;transform:scaleX(-1)"></div>
+  <div class="dust" id="dust"></div>
+  <div class="lobby-title">
+    <h2>The Lobby</h2>
+    <p>Take a breath. You belong here.</p>
+  </div>
+  <aside class="directory-wall" aria-label="Building directory">
+    <h5>Directory</h5>
+    <ul id="dirWall"></ul>
+  </aside>
+  <div class="layer" data-depth="0.03">
+    <div class="plant" style="left:8%"><span class="leaf" style="--lr:-14deg;left:38%"></span><span class="leaf" style="--lr:0deg"></span><span class="leaf" style="--lr:14deg;left:62%"></span><div class="pot"></div></div>
+    <div class="plant" style="right:5%"><span class="leaf" style="--lr:-12deg;left:40%"></span><span class="leaf" style="--lr:2deg"></span><span class="leaf" style="--lr:16deg;left:60%"></span><div class="pot"></div></div>
+  </div>
+  <div class="front-desk hotspot" id="frontDeskHS" tabindex="0" role="button" aria-label="Front desk — talk to someone, get help finding your way">
+    <div class="hs-label">🤝 Front Desk — Talk to Someone<small>"I'm not sure what I need."</small></div>
+    <div class="fd-person"><div class="head"></div><div class="torso"></div></div>
+    <div class="fd-lamp"></div>
+    <div class="fd-bell"></div>
+    <div class="fd-top"></div>
+    <div class="fd-body"></div>
+  </div>
+  <div class="hall-entrance hotspot" id="hallEntrance" tabindex="0" role="button" aria-label="Walk into the hallway">
+    <div class="hs-label">🚶 Walk into the Hallway<small>Rooms, meetings & more</small></div>
+    <div class="he-arch">
+      <div class="persp"></div>
+      <div class="glow-end"></div>
+      <div class="he-doors" style="left:22%"></div>
+      <div class="he-doors" style="right:22%"></div>
+    </div>
+  </div>
+  <div class="kiosk hotspot" id="kioskHS" tabindex="0" role="button" aria-label="Self-service kiosk — directory, check-in, schedule, resources">
+    <div class="hs-label">🖥️ Kiosk — Self-Service<small>"I know what I need."</small></div>
+    <div class="kiosk-screen">
+      <div class="glow"></div>
+      <div class="row" style="top:18%;width:52%"></div>
+      <div class="row" style="top:34%"></div>
+      <div class="row" style="top:48%"></div>
+      <div class="row" style="top:62%;right:30%"></div>
+      <div class="sheen"></div>
+    </div>
+    <div class="kiosk-stand"></div>
+    <div class="kiosk-base"></div>
+  </div>
+  <div class="exit-door-lobby hotspot" id="exitLobby" tabindex="0" role="button" aria-label="Go back outside">
+    <div class="hs-label">🌙 Back outside</div>
+    <div class="frame"><span>Front Door</span></div>
+  </div>
+</section>
+
+<!-- ================= SCENE 3 · HALLWAY ================= -->
+<section class="scene" id="scene-hallway" aria-label="Main hallway with rooms on both sides">
+  <div class="hall-world">
+    <div class="hall-ceiling">
+      <div class="hall-lightfix" style="top:22%"></div>
+      <div class="hall-lightfix" style="top:52%"></div>
+      <div class="hall-lightfix" style="top:80%"></div>
+    </div>
+    <div class="hall-floor"></div>
+    <div class="hall-runner"></div>
+    <div class="hall-wall left"><div class="hall-doors" id="hallLeft"></div></div>
+    <div class="hall-wall right"><div class="hall-doors" id="hallRight"></div></div>
+    <div class="hall-end">
+      <div class="hall-far">
+        <div class="garden-glimpse" aria-hidden="true"></div>
+        <button class="far-btn" data-go="garden" data-dir="forward">Back Door → Garden<small>from support to flourishing</small></button>
+        <button class="far-btn" data-go="basement" data-dir="forward">Stairs ↓ Recovering the Mind<small>59 practices · 7 movements</small></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SCENE 4 · ROOM (hosts a live React page) ================= -->
+<section class="scene" id="scene-room" aria-label="Room interior">
+  <div class="room-accent-band"></div>
+  <div class="room-floor"></div>
+  <div class="room-rug"></div>
+  <div class="layer" data-depth="0.015"><div class="room-window-big"></div></div>
+  <div class="dust" id="dustRoom"></div>
+  <div class="room-furniture">
+    <div class="chair" style="left:10%"><div class="back"></div><div class="seat"></div><div class="legs"></div></div>
+    <div class="chair" style="left:20%;transform:scale(.88)"><div class="back"></div><div class="seat"></div><div class="legs"></div></div>
+    <div class="lamp-floor" style="right:30%"></div>
+    <div class="plant" style="right:3%;bottom:0"><span class="leaf" style="--lr:-12deg;left:40%"></span><span class="leaf" style="--lr:4deg"></span><span class="leaf" style="--lr:15deg;left:60%"></span><div class="pot"></div></div>
+  </div>
+  <div class="room-head">
+    <div class="r-eyebrow" id="roomEyebrow">Room</div>
+    <h2 id="roomTitle">Room</h2>
+    <p id="roomDesc"></p>
+  </div>
+  <div class="room-quote"><p id="roomQuote"></p></div>
+  <div class="room-cards" id="roomCards"></div>
+  <!-- Live React page mounts here when a door with a `page` is opened -->
+  <div id="react-room" aria-live="polite"></div>
+</section>
+
+<!-- ================= SCENE 5 · BASEMENT — RECOVERING THE MIND ================= -->
+<section class="scene" id="scene-basement" aria-label="Recovering the Mind — the basement wisdom space with 59 practices in 7 movements">
+  <div class="stone-wall"></div>
+  <div class="basement-floor"></div>
+  <div class="layer" data-depth="0.02">
+    <div class="candle" style="left:3.5%;bottom:26%"><div class="flame"></div><div class="wax"></div></div>
+    <div class="candle" style="left:9%;bottom:23%;transform:scale(.78)"><div class="flame" style="animation-delay:.7s"></div><div class="wax"></div></div>
+    <div class="candle" style="left:46%;bottom:30%;transform:scale(.68)"><div class="flame" style="animation-delay:1.2s"></div><div class="wax"></div></div>
+  </div>
+  <div class="basement-head">
+    <div class="b-eyebrow">The Basement · Recovering the Mind</div>
+    <h2>Fifty-nine practices, <em>seven movements</em></h2>
+    <p>Training the mind back toward freedom — from first awareness to a sustainable, generous life. Sit with one. Turn it over. Take what serves you.</p>
+  </div>
+  <div class="slogan-stage">
+    <div class="slogan-card" id="sloganCard" tabindex="0" role="button" aria-label="Flip the practice card to reflect">
+      <div class="sc-face sc-front">
+        <div class="sc-num" id="sloganNum">Slogan 1 · Point One</div>
+        <div class="sc-mark">Recovering the Mind</div>
+        <h3 id="sloganText">First, embrace the four foundations</h3>
+        <div class="sc-tap">Tap to turn it over</div>
+      </div>
+      <div class="sc-face sc-back">
+        <h5 id="modeLabel">Sit with it</h5>
+        <p id="sloganPrompt"></p>
+        <h6 id="sloganRef"></h6>
+        <div class="sc-practice" id="sloganPractice"></div>
+      </div>
+    </div>
+  </div>
+  <div class="slogan-controls">
+    <button class="ghost-btn" id="sloganPrev">← Previous</button>
+    <button class="ghost-btn primary" id="sloganNext">Next practice →</button>
+  </div>
+  <aside class="rtm-panel" aria-label="Recovering the Mind engine">
+    <div class="rtm-block">
+      <h6 class="rtm-label">Today's Practice</h6>
+      <div class="today-card">
+        <b id="todayTitle"></b>
+        <div class="today-why" id="todayWhy"></div>
+        <button class="ghost-btn primary today-go" id="todayBtn">Practice this →</button>
+      </div>
+    </div>
+    <div class="rtm-block">
+      <h6 class="rtm-label">Seven Movements</h6>
+      <div class="mv-chips" id="mvChips"></div>
+      <p class="pt-meaning" id="ptMeaning"></p>
+    </div>
+    <div class="rtm-block">
+      <h6 class="rtm-label">Reflection Mode <small>· your choice, always</small></h6>
+      <div class="mode-chips">
+        <button class="mode-chip on" data-mode="recovery">Recovery</button>
+        <button class="mode-chip" data-mode="neuro">Neuroscience</button>
+        <button class="mode-chip" data-mode="grace">Grace</button>
+        <button class="mode-chip" data-mode="scripture">Scripture</button>
+      </div>
+    </div>
+    <div class="rtm-block">
+      <h6 class="rtm-label">This practice</h6>
+      <div class="meta-chips" id="metaChips"></div>
+    </div>
+    <div class="rtm-block">
+      <h6 class="rtm-label">Daily rhythm <small>· Slogans 39 &amp; 41</small></h6>
+      <div class="rhythm">
+        <button id="amBtn">🌄 Morning intention<small>aim the day</small></button>
+        <button id="pmBtn">🌙 Evening reflection<small>harvest the day</small></button>
+      </div>
+    </div>
+    <p class="rtm-safety">Words, attention, imagination, and repeated practice help the brain rehearse a new future. This room is a companion for recovery support — peer-based and non-clinical. It is not medical or mental-health treatment, and it never replaces care you may choose to seek.</p>
+  </aside>
+  <div class="breath" aria-hidden="true"><div class="ring"></div><div class="core"></div><span>Breathe with me</span></div>
+  <p class="renew-verse">“…be transformed by the renewing of your mind.” — Romans 12:2</p>
+</section>
+
+<!-- ================= SCENE 6 · GARDEN ================= -->
+<section class="scene" id="scene-garden" aria-label="Community garden behind the building">
+  <div class="layer" data-depth="0.012"><div class="sun"></div></div>
+  <div class="garden-ground"></div>
+  <div class="garden-path"></div>
+  <div class="layer" data-depth="0.03" id="gardenPlants"></div>
+  <div class="bfly" style="top:34%;left:22%">🦋</div>
+  <div class="bfly" style="top:46%;right:30%;--bd:21s;font-size:16px">🦋</div>
+  <div class="garden-head">
+    <div class="g-eyebrow">Out the back door</div>
+    <h2>The Community Garden</h2>
+    <p>Support becomes flourishing. This is where recovery capital grows — tended a little every day.</p>
+  </div>
+  <div class="garden-beds" id="gardenBeds"></div>
+  <div class="garden-gate hotspot" id="gardenGate" tabindex="0" role="button" aria-label="Walk through the garden gates into the Des Moines neighborhood">
+    <div class="hs-label">🏙️ Through the gates → Des Moines<small>neighborhood resources</small></div>
+    <div class="arch"><div class="cityhint"><i style="height:60%"></i><i style="height:88%"></i><i style="height:70%"></i></div></div>
+    <div class="vine" style="left:-4%;transform:rotate(-8deg)"></div>
+    <div class="vine" style="right:-4%;transform:rotate(8deg)"></div>
+  </div>
+</section>
+
+<!-- ================= SCENE 7 · CITY / DIGITAL TWIN ================= -->
+<section class="scene" id="scene-city" aria-label="Des Moines digital twin with real-world resource map">
+  <div class="city-title">
+    <h2>Des Moines · The Neighborhood</h2>
+    <p>A living map of real places that help. Tap a light to learn more.</p>
+  </div>
+  <div class="city-map" id="cityMap">
+    <div class="city-grid"></div>
+    <div class="river"></div>
+    <div class="river raccoon"></div>
+    <div class="city-glow" style="width:220px;height:220px;top:30%;left:34%"></div>
+    <div class="city-glow" style="width:160px;height:160px;bottom:16%;right:20%"></div>
+  </div>
+  <aside class="city-panel">
+    <header>
+      <div class="c-eyebrow">Resource Registry</div>
+      <h3>Real help, real places</h3>
+      <p>Community anchors across food, housing, health, work, and connection. Location-aware and growing.</p>
+    </header>
+    <div class="res-list" id="resList"></div>
+  </aside>
+</section>
+
+<!-- ================= PANELS ================= -->
+<div id="scrim"></div>
+<div class="panel warm" id="panelDesk" role="dialog" aria-modal="true" aria-label="Front desk — talk to someone">
+  <div class="panel-inner">
+    <button class="close-x" data-close>✕</button>
+    <div class="p-eyebrow2" style="color:var(--accent-clay)">Front Desk</div>
+    <h3>Hi — glad you're here. How can we help?</h3>
+    <p class="lead">No wrong answers. If you're not sure what you need, that's exactly what we're for.</p>
+    <div class="opt-list" id="deskOpts"></div>
+    <p class="privacy-note">You choose what to share, always. The front desk is peer support — people with lived experience, not a clinical service. Nothing here is a diagnosis or treatment.</p>
+  </div>
+</div>
+<div class="panel dark" id="panelKiosk" role="dialog" aria-modal="true" aria-label="Self-service kiosk">
+  <div class="panel-inner">
+    <button class="close-x" data-close>✕</button>
+    <div class="p-eyebrow2" style="color:#7fd4cd">Self-Service Kiosk</div>
+    <h3>What do you need to do?</h3>
+    <div class="kiosk-tabs" id="kioskTabs"></div>
+    <div class="kiosk-body" id="kioskBody"></div>
+    <p class="privacy-note">Quick, independent, on your terms. Check-ins and forms save privately to your own journey — never shared without your consent.</p>
+  </div>
+</div>
+
+<!-- shell control scripts (classic — shared scope) then the React room host (module) -->
+<script src="/vrcc-shell.js"></script>
+<script src="/vrcc-modes.js"></script>
+<script type="module" src="/src/main.jsx"></script>
+</body>
 </html>

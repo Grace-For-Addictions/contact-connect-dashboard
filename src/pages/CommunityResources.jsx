@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -49,21 +49,21 @@ export default function CommunityResources() {
 
   const { data: resources = [] } = useQuery({
     queryKey: ['resources'],
-    queryFn: () => base44.entities.CommunityResource.list('-created_date'),
+    queryFn: () => db.entities.CommunityResource.list('-created_date'),
   });
 
   const { data: participants = [] } = useQuery({
     queryKey: ['participants'],
-    queryFn: () => base44.entities.Participant.list(),
+    queryFn: () => db.entities.Participant.list(),
   });
 
   const { data: matches = [] } = useQuery({
     queryKey: ['resourceMatches'],
-    queryFn: () => base44.entities.ResourceMatch.list('-match_date'),
+    queryFn: () => db.entities.ResourceMatch.list('-match_date'),
   });
 
   const createResourceMutation = useMutation({
-    mutationFn: (data) => base44.entities.CommunityResource.create(data),
+    mutationFn: (data) => db.entities.CommunityResource.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['resources'] });
       setAddDialogOpen(false);
@@ -77,7 +77,7 @@ export default function CommunityResources() {
   });
 
   const createMatchMutation = useMutation({
-    mutationFn: (data) => base44.entities.ResourceMatch.create(data),
+    mutationFn: (data) => db.entities.ResourceMatch.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['resourceMatches'] });
       toast.success('Resource match saved');
@@ -85,7 +85,7 @@ export default function CommunityResources() {
   });
 
   const updateResourceMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.CommunityResource.update(id, data),
+    mutationFn: ({ id, data }) => db.entities.CommunityResource.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['resources'] });
     }
@@ -121,7 +121,7 @@ Provide a JSON array of the top 5 most relevant resources with:
 
 Consider eligibility, accessibility, and alignment with their current situation.`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
+      const response = await db.integrations.Core.InvokeLLM({
         prompt: prompt,
         response_json_schema: {
           type: "object",
@@ -193,7 +193,7 @@ Provide analysis in JSON format:
 3. high_demand_areas: categories with high utilization
 4. recommendations: specific suggestions for improving the resource library`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
+      const response = await db.integrations.Core.InvokeLLM({
         prompt: prompt,
         response_json_schema: {
           type: "object",

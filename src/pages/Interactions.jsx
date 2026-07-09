@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -20,12 +20,12 @@ export default function Interactions() {
 
   const { data: interactions = [], isLoading } = useQuery({
     queryKey: ['interactions'],
-    queryFn: () => base44.entities.Interaction.list('-date', 200),
+    queryFn: () => db.entities.Interaction.list('-date', 200),
   });
 
   const { data: staff = [] } = useQuery({
     queryKey: ['staff'],
-    queryFn: () => base44.entities.User.list(),
+    queryFn: () => db.entities.User.list(),
   });
 
   const filteredInteractions = interactions.filter(i => {

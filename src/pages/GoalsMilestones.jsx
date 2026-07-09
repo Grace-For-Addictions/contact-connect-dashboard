@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { db } from '@/api/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Input } from "@/components/ui/input";
@@ -31,21 +31,21 @@ export default function GoalsMilestones() {
   });
 
   useEffect(() => {
-    base44.entities.Participant.list().then(setParticipants);
+    db.entities.Participant.list().then(setParticipants);
   }, []);
 
   const { data: goals = [] } = useQuery({
     queryKey: ['goals'],
-    queryFn: () => base44.entities.Goal.list('-created_date'),
+    queryFn: () => db.entities.Goal.list('-created_date'),
   });
 
   const { data: milestones = [] } = useQuery({
     queryKey: ['milestones'],
-    queryFn: () => base44.entities.Milestone.list('-date_achieved'),
+    queryFn: () => db.entities.Milestone.list('-date_achieved'),
   });
 
   const createGoalMutation = useMutation({
-    mutationFn: (data) => base44.entities.Goal.create(data),
+    mutationFn: (data) => db.entities.Goal.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
       setGoalDialogOpen(false);
@@ -54,7 +54,7 @@ export default function GoalsMilestones() {
   });
 
   const createMilestoneMutation = useMutation({
-    mutationFn: (data) => base44.entities.Milestone.create(data),
+    mutationFn: (data) => db.entities.Milestone.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['milestones'] });
       setMilestoneDialogOpen(false);
@@ -63,7 +63,7 @@ export default function GoalsMilestones() {
   });
 
   const updateGoalMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Goal.update(id, data),
+    mutationFn: ({ id, data }) => db.entities.Goal.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goals'] }),
   });
 
