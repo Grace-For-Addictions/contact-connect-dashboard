@@ -47,7 +47,7 @@ create table if not exists public.rr_residents (
   id               uuid primary key default gen_random_uuid(),
   house_id         uuid references public.rr_houses(id) on delete set null,
   residence_id     uuid references public.recovery_residences(id) on delete set null,
-  participant_id   uuid references public.participants(id) on delete set null,
+  participant_id   uuid,   -- VRCC participant (joined client-side; no hard FK)
   participant_name text,
   bed_number       integer,
   status           text default 'applicant',  -- applicant / resident / alumni / discharged
