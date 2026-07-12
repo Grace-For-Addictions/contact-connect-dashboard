@@ -62,7 +62,7 @@ create table if not exists public.rr_residents (
 create table if not exists public.rr_intake_documents (
   id             uuid primary key default gen_random_uuid(),
   resident_id    uuid references public.rr_residents(id) on delete cascade,
-  participant_id uuid references public.participants(id) on delete set null,
+  participant_id uuid,   -- references a VRCC participant (joined client-side; no hard FK so this migration runs standalone)
   house_id       uuid references public.rr_houses(id) on delete set null,
   doc_type       text not null,   -- application / agreement / house_rules / roi / relapse_policy
   title          text,
