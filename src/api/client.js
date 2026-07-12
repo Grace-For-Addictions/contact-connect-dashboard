@@ -91,6 +91,10 @@ const TABLE = {
   Survey: 'surveys',
   CoachTraining: 'coach_trainings',
   User: 'users',
+  RecoveryResidence: 'recovery_residences',
+  RrHouse: 'rr_houses',
+  RrResident: 'rr_residents',
+  RrIntakeDocument: 'rr_intake_documents',
 };
 
 // Base44 sort strings: 'field' (asc) or '-field' (desc).

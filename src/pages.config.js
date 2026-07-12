@@ -62,6 +62,7 @@ import ParticipantDetail from './pages/ParticipantDetail';
 import Participants from './pages/Participants';
 import ProgressReviews from './pages/ProgressReviews';
 import RecoveryCapitalPage from './pages/RecoveryCapitalPage';
+import RecoveryResidences from './pages/RecoveryResidences';
 import RecoveryTracker from './pages/RecoveryTracker';
 import Referrals from './pages/Referrals';
 import Reports from './pages/Reports';
@@ -86,6 +87,7 @@ export const PAGES = {
     "Participants": Participants,
     "ProgressReviews": ProgressReviews,
     "RecoveryCapitalPage": RecoveryCapitalPage,
+    "RecoveryResidences": RecoveryResidences,
     "RecoveryTracker": RecoveryTracker,
     "Referrals": Referrals,
     "Reports": Reports,

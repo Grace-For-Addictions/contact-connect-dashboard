@@ -22,7 +22,8 @@ import {
   Compass,
   Users2,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  Home
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -74,6 +75,7 @@ export default function Layout({ children, currentPageName }) {
       ]
     },
     { name: 'Referrals', page: 'Referrals', icon: Compass },
+    { name: 'Recovery Residences', page: 'RecoveryResidences', icon: Home },
     { name: 'Resources', page: 'CommunityResources', icon: Heart },
     { name: 'Progress Reviews', page: 'ProgressReviews', icon: FileText },
     { name: 'Coach Training', page: 'CoachTraining', icon: Sparkles },
