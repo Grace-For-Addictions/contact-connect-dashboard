@@ -5,7 +5,12 @@ import { queryClientInstance } from '@/lib/query-client'
 import VisualEditAgent from '@/lib/VisualEditAgent'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Route, Routes } from 'react-router-dom';
+
+// Hash routing (VITE_ROUTER=hash) lets the SPA run from any static host that
+// can't rewrite deep links to index.html (e.g. object storage). Default is
+// history-based routing for clean URLs behind a proper SPA fallback.
+const Router = import.meta.env.VITE_ROUTER === 'hash' ? HashRouter : BrowserRouter;
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
