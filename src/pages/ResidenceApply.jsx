@@ -150,9 +150,9 @@ export default function ResidenceApply() {
           <Card className="mt-4">
             <CardContent className="pt-6">
               <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                <Home className="w-5 h-5 text-teal-600" /> Which house are you applying to?
+                <Home className="w-5 h-5 text-teal-600" /> Which residence are you applying to?
               </h2>
-              <p className="text-sm text-slate-500 mt-1">Pick a house, or choose “not sure yet.”</p>
+              <p className="text-sm text-slate-500 mt-1">Grace House (women’s) · EJWRH (men’s). Or choose “not sure yet.”</p>
               <div className="flex flex-col gap-2 mt-4">
                 {houses.map((h) => {
                   const open = Math.max(0, (h.total_beds || 0) - (filledByHouse[h.id] || 0));
@@ -226,7 +226,7 @@ function F({ label, full, ...props }) {
 }
 
 function Steps({ step }) {
-  const items = ['Account', 'House', 'Review & sign'];
+  const items = ['Account', 'Residence', 'Review & sign'];
   return (
     <div className="flex items-center gap-2">
       {items.map((label, i) => {
