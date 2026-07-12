@@ -118,7 +118,7 @@ export default function IntakePacket({ open, onOpenChange, resident, carryOver, 
               disabled={!allSigned}
               onClick={() => onComplete?.()}
             >
-              {allSigned ? 'Complete admission — resident moves in' : `Sign all ${INTAKE_DOCS.length} documents to admit`}
+              {allSigned ? 'Finish & submit — all documents signed' : `Sign all ${INTAKE_DOCS.length} documents to finish`}
             </Button>
           </div>
         ) : (
