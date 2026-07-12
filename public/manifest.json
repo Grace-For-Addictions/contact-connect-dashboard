@@ -1,0 +1,17 @@
+{
+  "name": "GFA VRCC Contact Connect",
+  "short_name": "VRCC Connect",
+  "description": "Grace for Addictions — VRCC recovery coaching dashboard",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0f1e",
+  "theme_color": "#0a0f1e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
