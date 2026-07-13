@@ -66,6 +66,7 @@ import RecoveryResidences from './pages/RecoveryResidences';
 import RecoveryTracker from './pages/RecoveryTracker';
 import Referrals from './pages/Referrals';
 import Reports from './pages/Reports';
+import StaffOperations from './pages/StaffOperations';
 import StrengthQuizzes from './pages/StrengthQuizzes';
 import Surveys from './pages/Surveys';
 import __Layout from './Layout.jsx';
@@ -91,6 +92,7 @@ export const PAGES = {
     "RecoveryTracker": RecoveryTracker,
     "Referrals": Referrals,
     "Reports": Reports,
+    "StaffOperations": StaffOperations,
     "StrengthQuizzes": StrengthQuizzes,
     "Surveys": Surveys,
 }

@@ -95,6 +95,9 @@ const TABLE = {
   RrHouse: 'rr_houses',
   RrResident: 'rr_residents',
   RrIntakeDocument: 'rr_intake_documents',
+  DrugScreen: 'drug_screens',
+  Incident: 'incidents',
+  HouseMeeting: 'house_meetings',
 };
 
 // Base44 sort strings: 'field' (asc) or '-field' (desc).
