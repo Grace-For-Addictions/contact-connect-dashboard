@@ -105,6 +105,9 @@ const TABLE = {
   EventRsvp: 'event_rsvps',
   RoomMessage: 'room_messages',
   Account: 'accounts',
+  ParticipantIntake: 'participant_intakes',
+  DirectoryEntry: 'directory_entries',
+  ConnectionRequest: 'connection_requests',
 };
 
 // Base44 sort strings: 'field' (asc) or '-field' (desc).

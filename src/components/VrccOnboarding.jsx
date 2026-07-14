@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { isSuperAdmin, setIdentity, getIdentity, isPending } from '@/lib/identity';
-import { UserRound, HeartHandshake, Building2, Users, ArrowLeft, CheckCircle2, Clock, Sparkles, ShieldCheck, LogIn } from 'lucide-react';
+import { VOLUNTEER_SKILLS } from '@/lib/lookups';
+import { UserRound, HeartHandshake, Building2, Users, ArrowLeft, CheckCircle2, Clock, Sparkles, ShieldCheck, LogIn, HandHeart } from 'lucide-react';
 
 /**
  * VrccOnboarding — the "who are you here as?" gate.
@@ -23,6 +24,7 @@ const ROLES = [
   { key: 'coach', icon: HeartHandshake, color: '#7c3aed', title: 'Peer Coach', blurb: "I support others as a peer coach or navigator." },
   { key: 'organization', icon: Building2, color: '#c8972a', title: 'Organization', blurb: "We're a recovery residence, RCC, church, or provider." },
   { key: 'supporter', icon: Users, color: '#2563eb', title: 'Recovery Supporter', blurb: "I'm family, a loved one, a sponsor, or a mentor." },
+  { key: 'volunteer', icon: HandHeart, color: '#0891b2', title: 'Volunteer', blurb: "I want to give my time — rides, meals, events, mentoring." },
 ];
 const ORG_TYPES = [
   ['recovery_residence', 'Sober living / Recovery residence'],
@@ -115,6 +117,11 @@ export default function VrccOnboarding() {
           ...base, org_name: f.org_name, first_name: f.first_name, last_name: f.last_name,
           org_types: f.org_types, role: 'organization',
           approval_status: superA ? 'approved' : 'pending',
+        });
+      } else if (role === 'volunteer') {
+        created = await persist({
+          ...base, first_name: f.first_name, last_name: f.last_name, role: 'volunteer',
+          skills: f.skills || [], approval_status: 'approved',
         });
       } else { // supporter
         created = await persist({
@@ -298,6 +305,30 @@ export default function VrccOnboarding() {
           </RoleForm>
         )}
 
+        {step === 'volunteer' && (
+          <RoleForm title="Create your volunteer account" color="#0891b2" busy={busy}
+            onSubmit={() => submit('volunteer')} valid={f.first_name && f.last_name && f.email}>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label className="text-xs text-slate-500">First name *</Label><Input className="mt-1" value={f.first_name} onChange={(e) => set('first_name', e.target.value)} /></div>
+              <div><Label className="text-xs text-slate-500">Last name *</Label><Input className="mt-1" value={f.last_name} onChange={(e) => set('last_name', e.target.value)} /></div>
+            </div>
+            <div><Label className="text-xs text-slate-500">Email *</Label><Input className="mt-1" type="email" value={f.email} onChange={(e) => set('email', e.target.value)} /></div>
+            <div>
+              <Label className="text-xs text-slate-500">How would you like to help? (choose all that apply)</Label>
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
+                {VOLUNTEER_SKILLS.map((s) => {
+                  const on = (f.skills || []).includes(s);
+                  return (
+                    <button key={s} type="button" onClick={() => set('skills', on ? f.skills.filter((x) => x !== s) : [...(f.skills || []), s])}
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition ${on ? 'border-cyan-500 bg-cyan-50 text-cyan-700' : 'border-slate-200 text-slate-500'}`}>{s}</button>
+                  );
+                })}
+              </div>
+            </div>
+            <p className="text-xs text-slate-400">Thank you for showing up. A coordinator will match you with ways to help that fit your gifts and schedule.</p>
+          </RoleForm>
+        )}
+
         {step === 'welcome' && (
           <Confirm icon={CheckCircle2} color="#0f766e" title={`You're all set${acct?.first_name ? ', ' + acct.first_name : ''}.`}
             body="Your account is ready and this device will remember you. The whole building is open — come on in." cta="Enter the VRCC" onDone={done} />
@@ -314,7 +345,7 @@ export default function VrccOnboarding() {
 }
 
 function blank() {
-  return { first_name: '', last_name: '', dob: '', email: '', resident: false, house_id: '', navigator: false, org_name: '', org_types: [], relationship: '', supporting: '' };
+  return { first_name: '', last_name: '', dob: '', email: '', resident: false, house_id: '', navigator: false, org_name: '', org_types: [], relationship: '', supporting: '', skills: [] };
 }
 
 const Header = ({ eyebrow, title, sub }) => (

@@ -29,7 +29,7 @@ export function isSuperAdmin(email) {
 
 /* ---- effective role: what this account can actually do right now ---- */
 // Ranks gate access. A room/page declares the minimum rank it needs.
-export const RANK = { guest: 0, participant: 0, supporter: 0, coach: 1, navigator: 2, admin: 3, super: 5 };
+export const RANK = { guest: 0, participant: 0, supporter: 0, volunteer: 0, coach: 1, navigator: 2, admin: 3, super: 5 };
 export const ACCESS_MIN = { all: 0, participant: 0, staff: 1, navigator: 2, admin: 3, super: 5 };
 
 export function effectiveRole(acct) {
@@ -40,6 +40,7 @@ export function effectiveRole(acct) {
     case 'organization': return approved ? 'admin' : 'participant';   // participant view until approved
     case 'coach':        return approved ? (acct.is_navigator ? 'navigator' : 'coach') : 'participant';
     case 'supporter':    return 'supporter';
+    case 'volunteer':    return 'volunteer';                          // participant-level access + volunteer portal
     default:             return 'participant';
   }
 }

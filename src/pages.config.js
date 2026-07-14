@@ -55,9 +55,11 @@ import CheckIns from './pages/CheckIns';
 import CoachTraining from './pages/CoachTraining';
 import CommunityResources from './pages/CommunityResources';
 import CommunityRooms from './pages/CommunityRooms';
+import Connector from './pages/Connector';
 import Dashboard from './pages/Dashboard';
 import EditProgressReview from './pages/EditProgressReview';
 import EventsWall from './pages/EventsWall';
+import Intake from './pages/Intake';
 import GoalsMilestones from './pages/GoalsMilestones';
 import GroupSessions from './pages/GroupSessions';
 import Interactions from './pages/Interactions';
@@ -87,9 +89,11 @@ export const PAGES = {
     "CoachTraining": CoachTraining,
     "CommunityResources": CommunityResources,
     "CommunityRooms": CommunityRooms,
+    "Connector": Connector,
     "Dashboard": Dashboard,
     "EditProgressReview": EditProgressReview,
     "EventsWall": EventsWall,
+    "Intake": Intake,
     "GoalsMilestones": GoalsMilestones,
     "GroupSessions": GroupSessions,
     "Interactions": Interactions,
