@@ -543,6 +543,7 @@ function refreshAccess(){
   const chip=document.querySelector('#whoami'); if(chip){ const id=identity();
     chip.textContent=id.identified?('You: '+id.role+(id.pending?' · pending':'')):'Sign in';
   }
+  if(typeof layoutDoorHits==='function'&&current==='hallway')layoutDoorHits();
 }
 window.addEventListener('vrcc:identity',refreshAccess);
 
@@ -603,6 +604,11 @@ function go(id,dir='forward',push=true){
   }));
   setTimeout(()=>from.classList.remove('exit-forward','exit-back'),950);
   current=id; syncHUD(); hidePeek();
+  // Position the door hit-zones as the hallway scale-in transition settles
+  // (recompute a few times so the smallest inner doors land exactly); clear
+  // them when leaving the hallway.
+  if(id==='hallway'){ [420,720,1020,1450].forEach(t=>setTimeout(()=>{ if(current==='hallway')layoutDoorHits(); },t)); }
+  else if(doorHitsEl){ doorHitsEl.style.display='none'; doorHitsEl.innerHTML=''; }
 }
 function goBack(){ if(!history.length)return; const prev=history.pop(); go(prev,'back',false); }
 function syncHUD(){
@@ -743,6 +749,49 @@ function openPreview(r){
   if(enter)enter.onclick=()=>{ closePanels(); enterRoom(r); };
 }
 window.vrccPreview=id=>{const r=ROOMS.find(x=>x.id===id);if(r)openPreview(r);};
+
+/* ── Door hit-zones ──
+   The hallway doors are painted on walls rotated 58° in 3D, so their real
+   on-screen faces are narrow, angled slivers that are almost impossible to
+   click (a click near a door lands on the hall background instead). To make the
+   hallway reliably usable we overlay a flat, axis-aligned transparent hit-zone
+   on top of each door, sized to that door's on-screen bounding box. The upper
+   part previews (the window), the lower part enters (the door). Recomputed when
+   the hallway opens and on resize. */
+let doorHitsEl;
+function ensureDoorHits(){
+  if(!doorHitsEl){ doorHitsEl=document.createElement('div'); doorHitsEl.id='doorHits'; document.body.appendChild(doorHitsEl); }
+  return doorHitsEl;
+}
+function layoutDoorHits(){
+  const wrap=ensureDoorHits();
+  wrap.innerHTML='';
+  if(current!=='hallway'){ wrap.style.display='none'; return; }
+  wrap.style.display='block';
+  document.querySelectorAll('#scene-hallway .hdoor').forEach(d=>{
+    const r=d._room; if(!r)return;
+    const b=d.getBoundingClientRect();
+    if(b.width<6||b.height<6)return;
+    const lk=roomLocked(r);
+    const hit=document.createElement('div');
+    hit.className='door-hit'+(lk?' locked':'');
+    hit.style.cssText=`left:${b.left}px;top:${b.top}px;width:${b.width}px;height:${b.height}px`;
+    hit.tabIndex=0; hit.setAttribute('role','button');
+    hit.setAttribute('aria-label',(lk?'Restricted: ':'Enter ')+r.name+'. '+r.peek);
+    hit.innerHTML=`<span class="dh-win" title="Look inside ${r.name}"></span><span class="dh-door" title="Enter ${r.name}"></span>`;
+    hit.querySelector('.dh-win').addEventListener('click',e=>{e.stopPropagation();hidePeek();openPreview(r);});
+    hit.querySelector('.dh-door').addEventListener('click',e=>{e.stopPropagation();hidePeek();enterRoom(r);});
+    hit.addEventListener('mouseenter',()=>showPeek(r,hit));
+    hit.addEventListener('mouseleave',hidePeek);
+    hit.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();enterRoom(r);}
+      if(e.key==='p'||e.key==='P'){e.preventDefault();openPreview(r);}
+    });
+    wrap.appendChild(hit);
+  });
+}
+window.addEventListener('resize',()=>{ if(current==='hallway')layoutDoorHits(); });
+window.vrccRelayoutDoors=layoutDoorHits;
 
 /* rooms — bridges to the live React page via a window event */
 function enterRoom(r){

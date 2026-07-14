@@ -55,7 +55,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
 #safeExit:hover{background:#c9576c;transform:scale(1.04)}
 #backBtn{display:none}
 #backBtn.show{display:flex}
-#minimap{position:fixed;left:20px;bottom:20px;z-index:8998;background:rgba(13,16,38,.6);backdrop-filter:blur(14px);
+#minimap{position:fixed;left:20px;bottom:20px;z-index:8998;pointer-events:none;background:rgba(13,16,38,.6);backdrop-filter:blur(14px);
   border:1px solid rgba(255,217,160,.2);border-radius:16px;padding:14px 16px;min-width:150px;transition:opacity .5s}
 #minimap h4{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,217,160,.55);margin-bottom:9px;font-weight:700}
 #minimap ol{list-style:none;display:flex;flex-direction:column;gap:5px}
@@ -630,3 +630,14 @@ body.cosmic .rr-scroll{background:#0d0c1e}
 .pv-enter:hover{filter:brightness(1.12)}
 .pv-locked{text-align:center;font-size:.85rem;color:#fca5a5;background:rgba(231,76,94,.1);border:1px solid rgba(231,76,94,.25);border-radius:12px;padding:12px}
 @media(max-width:560px){.pv-cards{grid-template-columns:1fr}}
+
+/* ── Hallway door hit-zones (flat, reliable click targets over the 3D doors) ── */
+#doorHits{position:fixed;inset:0;z-index:8999;pointer-events:none;display:none}
+.door-hit{position:fixed;pointer-events:auto;display:flex;flex-direction:column;border-radius:10px 10px 4px 4px;transition:box-shadow .2s,background .2s}
+.door-hit:hover{background:rgba(255,217,160,.08);box-shadow:0 0 0 2px rgba(255,217,160,.35),0 0 26px rgba(255,217,160,.28)}
+.door-hit:focus-visible{outline:none;box-shadow:0 0 0 2px var(--warm-1),0 0 26px rgba(255,217,160,.4)}
+.door-hit.locked:hover{background:rgba(231,76,94,.07);box-shadow:0 0 0 2px rgba(231,76,94,.35)}
+.door-hit .dh-win{flex:0 0 46%;cursor:pointer;border-radius:10px 10px 0 0}
+.door-hit .dh-door{flex:1 1 auto;cursor:pointer;border-radius:0 0 4px 4px}
+.door-hit .dh-win:hover{background:rgba(120,200,255,.12)}
+.door-hit .dh-door:hover{background:rgba(255,217,160,.12)}
