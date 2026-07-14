@@ -540,6 +540,7 @@ const CITY_RES=[
  {n:'YSS (Youth & Shelter Services)',c:'Young people',d:'Support, housing, and recovery services for young Iowans.',x:62,y:76,col:'#4d7fa8',i:'🌟'}
 ];
 const SCENE_META={
+ landing:{label:'Grace For Addictions',hint:''},
  arrival:{label:'Outside the VRCC · dusk',hint:'Click the <b>front door</b> to come in — or press <kbd>Enter</kbd>'},
  lobby:{label:'The Lobby',hint:'<kbd>D</kbd> Front Desk · <kbd>K</kbd> Kiosk · <kbd>H</kbd> Hallway · <kbd>Esc</kbd> back'},
  hallway:{label:'Main Hallway',hint:'Hover a door to <b>peek through the window</b> · click to enter · <kbd>Esc</kbd> lobby'},
@@ -548,7 +549,7 @@ const SCENE_META={
  garden:{label:'Community Garden',hint:'Walk through the <b>gates</b> to reach the Des Moines map · <kbd>Esc</kbd> inside'},
  city:{label:'Des Moines · Digital Twin',hint:'Tap a light on the map · <kbd>Esc</kbd> back to the garden'}
 };
-let current='arrival', history=[], currentRoom=null, hintTimer;
+let current='landing', history=[], currentRoom=null, hintTimer;
 
 function go(id,dir='forward',push=true){
   if(id===current)return;
@@ -569,6 +570,7 @@ function go(id,dir='forward',push=true){
 function goBack(){ if(!history.length)return; const prev=history.pop(); go(prev,'back',false); }
 function syncHUD(){
   const meta=SCENE_META[current];
+  document.body.classList.toggle('landing',current==='landing');
   $('#whereLabel').textContent=current==='room'&&currentRoom?currentRoom.name:meta.label;
   $('#backBtn').classList.toggle('show',history.length>0);
   $$('#minimap li').forEach(li=>li.classList.toggle('here',li.dataset.mm===current));

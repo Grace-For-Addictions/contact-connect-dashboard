@@ -43,8 +43,82 @@
 <div id="peek" role="tooltip" aria-hidden="true"></div>
 <div id="toast" role="status"></div>
 
+<!-- ================= SCENE 0 · LANDING ================= -->
+<style>
+  body.landing #hud, body.landing #minimap, body.landing #hint { display:none !important; }
+  #scene-landing{ overflow-y:auto; background:
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(31,182,182,.16), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 20%, rgba(123,63,242,.14), transparent 60%),
+    linear-gradient(180deg, #060512 0%, #0a0820 45%, #0c0a1e 100%); }
+  .lp-wrap{ position:relative; z-index:2; max-width:1080px; margin:0 auto; padding:26px 24px 80px; color:#EAF0FB; }
+  .lp-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:48px; flex-wrap:wrap; }
+  .lp-brand{ font-family:'Cinzel',serif; font-size:12px; letter-spacing:.28em; text-transform:uppercase; color:#4ECFCF; }
+  .lp-hero{ text-align:center; padding:24px 0 8px; }
+  .lp-eyebrow{ font-family:'Albert Sans',sans-serif; font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:rgba(234,240,251,.55); margin-bottom:18px; }
+  .lp-hero h1{ font-family:'Fraunces',serif; font-weight:600; font-size:clamp(2.1rem,5.5vw,4rem); line-height:1.06; margin:0 auto 20px; max-width:16ch; }
+  .lp-hero h1 em{ font-style:italic; color:#4ECFCF; }
+  .lp-lead{ font-family:'Crimson Pro',serif; font-size:clamp(1.05rem,2vw,1.3rem); line-height:1.7; color:rgba(234,240,251,.78); max-width:620px; margin:0 auto 30px; }
+  .lp-cta{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .lp-values{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:34px 0 8px; }
+  .lp-pill{ font-family:'Albert Sans',sans-serif; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:rgba(234,240,251,.7);
+    border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:6px 14px; }
+  .lp-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px; margin:56px 0; }
+  .lp-card{ background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:22px; transition:.25s; }
+  .lp-card:hover{ background:rgba(255,255,255,.06); border-color:rgba(78,207,207,.35); transform:translateY(-3px); }
+  .lp-card .ico{ font-size:1.7rem; margin-bottom:10px; }
+  .lp-card h3{ font-family:'Fraunces',serif; font-weight:600; font-size:1.08rem; margin:0 0 6px; color:#fff; }
+  .lp-card p{ font-family:'Albert Sans',sans-serif; font-size:.9rem; line-height:1.6; color:rgba(234,240,251,.68); margin:0; }
+  .lp-closer{ text-align:center; padding:36px 24px 8px; border-top:1px solid rgba(255,255,255,.08); }
+  .lp-closer h2{ font-family:'Fraunces',serif; font-style:italic; font-weight:500; font-size:clamp(1.4rem,3vw,2rem); color:#fff; margin:0 0 8px; }
+  .lp-closer p{ font-family:'Crimson Pro',serif; color:rgba(234,240,251,.7); margin:0 0 24px; }
+  .lp-foot{ text-align:center; margin-top:60px; font-family:'Albert Sans',sans-serif; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:rgba(234,240,251,.4); }
+</style>
+<section class="scene active" id="scene-landing" aria-label="Grace For Addictions — Virtual Recovery Community Center — welcome">
+  <div class="lp-wrap">
+    <div class="lp-top">
+      <div class="lp-brand">Grace For Addictions · VRCC</div>
+      <button class="ghost-btn primary" data-go="arrival" data-dir="forward">Head to the VRCC →</button>
+    </div>
+
+    <div class="lp-hero">
+      <div class="lp-eyebrow">Virtual Recovery Community Center · Des Moines, Iowa</div>
+      <h1>Recovery is a place you can <em>walk into</em>.</h1>
+      <p class="lp-lead">The VRCC isn't a form to fill out — it's a virtual community you explore like a building. Step inside to check in on how you're really doing, sit in a circle, find verified Iowa resources, celebrate milestones, and talk to Grace any hour of the day.</p>
+      <div class="lp-cta">
+        <button class="ghost-btn primary" data-go="arrival" data-dir="forward">Head to the VRCC →</button>
+        <button class="ghost-btn" data-go="city" data-dir="forward">Browse area resources</button>
+      </div>
+      <div class="lp-values">
+        <span class="lp-pill">No fees</span>
+        <span class="lp-pill">No stigma</span>
+        <span class="lp-pill">Peer-led</span>
+        <span class="lp-pill">Available 24/7</span>
+        <span class="lp-pill">Just grace</span>
+      </div>
+    </div>
+
+    <div class="lp-grid">
+      <div class="lp-card"><div class="ico">🏛️</div><h3>A building, not an app</h3><p>Walk a lobby and a hallway, then open doors to rooms that each do something real — no menus to decode.</p></div>
+      <div class="lp-card"><div class="ico">🪞</div><h3>Daily check-in</h3><p>A thirty-second pulse on how you're arriving today. Honest, private, and visible to the team that supports you.</p></div>
+      <div class="lp-card"><div class="ico">💬</div><h3>Safe chat rooms</h3><p>Ten moderated spaces to connect — Open Circle, Justice Journeys, Women's and Men's, and more. Anonymous if you want.</p></div>
+      <div class="lp-card"><div class="ico">🌟</div><h3>Walls of Honor</h3><p>Celebrate milestones, honor those we've lost with dignity, and share what you're grateful for.</p></div>
+      <div class="lp-card"><div class="ico">✨</div><h3>Grace, your companion</h3><p>An AI companion that's always here and always labeled as AI — and always one tap away from a real person.</p></div>
+      <div class="lp-card"><div class="ico">🧭</div><h3>Resource navigation</h3><p>Verified Iowa help for housing, food, work, healthcare, and legal needs — warm referrals, never just a phone number.</p></div>
+    </div>
+
+    <div class="lp-closer">
+      <h2>The lights are on. Come in when you're ready.</h2>
+      <p>Connection prevents crisis. A place — not an app.</p>
+      <div class="lp-cta">
+        <button class="ghost-btn primary" data-go="arrival" data-dir="forward">Head to the VRCC →</button>
+      </div>
+      <div class="lp-foot">Grace For Addictions · No Shame, No Stigma, Just Grace · In crisis? Call or text 988</div>
+    </div>
+  </div>
+</section>
+
 <!-- ================= SCENE 1 · ARRIVAL ================= -->
-<section class="scene active" id="scene-arrival" aria-label="Arriving outside the Virtual Recovery Community Center">
+<section class="scene" id="scene-arrival" aria-label="Arriving outside the Virtual Recovery Community Center">
   <div class="layer" data-depth="0.012"><div class="stars" id="stars"></div><div class="moon"></div></div>
   <div class="layer" data-depth="0.02"><div class="clouds" id="clouds"></div></div>
   <div class="layer" data-depth="0.03"><div class="skyline" id="skyline"></div></div>
