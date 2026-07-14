@@ -5,7 +5,13 @@ import { queryClientInstance } from '@/lib/query-client'
 import RoomHost from '@/shell/RoomHost'
 import ResidenceApply from '@/pages/ResidenceApply'
 import DailyCheckIn from '@/pages/DailyCheckIn'
+import VrccOnboarding from '@/components/VrccOnboarding'
+import { getIdentity, syncWindow } from '@/lib/identity'
 import '@/index.css'
+
+// Publish the current identity to the shell before anything renders, so the
+// hallway locks the right doors from the first paint.
+syncWindow(getIdentity())
 
 const params = new URLSearchParams(window.location.search)
 
@@ -32,6 +38,15 @@ if (params.has('apply')) {
   if (mount) {
     ReactDOM.createRoot(mount).render(<RoomHost />)
   }
+
+  // The self-identify / onboarding gate lives in its own overlay root so it can
+  // cover the whole building (lobby, hallway, rooms) when the visitor enters.
+  const onb = document.createElement('div')
+  onb.id = 'onboarding-root'
+  document.body.appendChild(onb)
+  ReactDOM.createRoot(onb).render(
+    <QueryClientProvider client={queryClientInstance}><VrccOnboarding /></QueryClientProvider>
+  )
 }
 
 if (import.meta.hot) {

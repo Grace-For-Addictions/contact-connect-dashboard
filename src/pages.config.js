@@ -47,6 +47,7 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import AccountApprovals from './pages/AccountApprovals';
 import AddParticipant from './pages/AddParticipant';
 import Affirmations from './pages/Affirmations';
 import BARC10 from './pages/BARC10';
@@ -78,6 +79,7 @@ import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AccountApprovals": AccountApprovals,
     "AddParticipant": AddParticipant,
     "Affirmations": Affirmations,
     "BARC10": BARC10,

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Pill, Plus, ShieldCheck, HeartPulse, Package, Download } from 'lucide-react';
+import RoleGate from '@/components/RoleGate';
 
 /**
  * Narcan Distribution Tracking — logs kits distributed, training provided, and
@@ -16,6 +17,10 @@ import { Pill, Plus, ShieldCheck, HeartPulse, Package, Download } from 'lucide-r
  * Exhibit E reporting. A CSV export gives operators a one-click compliance pull.
  */
 export default function NarcanTracking() {
+  return <RoleGate access="staff" area="Narcan tracking"><NarcanTrackingInner /></RoleGate>;
+}
+
+function NarcanTrackingInner() {
   const qc = useQueryClient();
   const [dialog, setDialog] = useState(false);
   const { data: logs = [] } = useQuery({ queryKey: ['narcan'], queryFn: () => db.entities.NarcanLog.list('-date') });

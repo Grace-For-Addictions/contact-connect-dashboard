@@ -104,6 +104,7 @@ const TABLE = {
   CommunityEvent: 'community_events',
   EventRsvp: 'event_rsvps',
   RoomMessage: 'room_messages',
+  Account: 'accounts',
 };
 
 // Base44 sort strings: 'field' (asc) or '-field' (desc).

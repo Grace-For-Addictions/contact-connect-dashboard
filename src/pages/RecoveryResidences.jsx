@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Home, Plus, BedDouble, Users, Building2, UserPlus, ArrowRight, ClipboardList, HeartPulse } from 'lucide-react';
 import IntakePacket from '@/components/residences/IntakePacket';
 import { buildCarryOver } from '@/components/residences/intakeTemplates';
+import RoleGate from '@/components/RoleGate';
 
 const MOOD_EMOJI = { struggling: '😔', tired: '😟', 'a little': '😟', steady: '😐', hopeful: '🙂', good: '😊', great: '😊' };
 const moodIcon = (m) => MOOD_EMOJI[(m || '').toLowerCase()] || (m ? '🙂' : '·');
@@ -22,6 +23,10 @@ const moodIcon = (m) => MOOD_EMOJI[(m || '').toLowerCase()] || (m ? '🙂' : '·
  * shows its beds, residents, and each resident's latest VRCC check-in.
  */
 export default function RecoveryResidences() {
+  return <RoleGate access="staff" area="The recovery residence portal"><RecoveryResidencesInner /></RoleGate>;
+}
+
+function RecoveryResidencesInner() {
   const qc = useQueryClient();
   const [newResOpen, setNewResOpen] = useState(false);
   const [admit, setAdmit] = useState(null); // { residence, bedNumber }

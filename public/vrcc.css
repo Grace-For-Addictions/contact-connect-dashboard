@@ -591,3 +591,13 @@ body.cosmic .rr-scroll{background:#0d0c1e}
 .rr-loading{display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-soft);
   font-family:var(--font-display);font-style:italic;font-size:15px}
 @media (max-width:900px){.rr-frame{inset:0}.rr-tag{display:none}}
+
+/* ── Identity, walk-through threshold & role locks (RBAC) ── */
+.vb-door{transition:transform 1.15s cubic-bezier(.45,.05,.2,1),border-color .3s,box-shadow .3s;transform-origin:left center}
+.vb-door-wrap.opening .vb-door{transform:rotateY(-88deg)}
+#threshold{position:fixed;inset:0;background:radial-gradient(circle at 50% 62%,#0c0a1e,#050409 70%);opacity:0;pointer-events:none;z-index:9000;transition:opacity .7s ease}
+#threshold.show{opacity:1}
+#whoami{text-transform:capitalize}
+#dirWall li .lk{display:none;margin-left:4px;opacity:.7}
+#dirWall li.locked{opacity:.6}
+#dirWall li.locked .lk{display:inline}

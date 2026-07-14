@@ -11,10 +11,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ShieldAlert, TestTube, FileWarning, Users2, Plus, Bell } from 'lucide-react';
+import RoleGate from '@/components/RoleGate';
 
 const LEVEL = { 1: ['Minor', '#15803d'], 2: ['Moderate', '#b45309'], 3: ['Serious', '#b91c1c'], 4: ['Emergency', '#7f1d1d'] };
 
 export default function StaffOperations() {
+  return <RoleGate access="staff" area="Staff Operations"><StaffOperationsInner /></RoleGate>;
+}
+
+function StaffOperationsInner() {
   const qc = useQueryClient();
   const [resFilter, setResFilter] = useState('all');
   const [dialog, setDialog] = useState(null); // 'screen' | 'incident' | 'meeting'

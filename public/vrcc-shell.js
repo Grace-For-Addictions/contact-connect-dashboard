@@ -38,7 +38,7 @@ const ROOMS=[
    {i:'🎙️',t:'Join a live room',d:'Step into a facilitated GFARC peer circle happening now.'},
    {i:'✋',t:'Check in / attend',d:'Mark your attendance privately for your own record.'},
    {i:'🌱',t:'Start attending',d:'New to circles? A facilitator will welcome you personally.'}]},
- {id:'residences',name:'Recovery Residences',ico:'🏘️',accent:'#c07a3e',side:'L',page:'RecoveryResidences',
+ {id:'residences',name:'Recovery Residences',ico:'🏘️',accent:'#c07a3e',side:'L',page:'RecoveryResidences',access:'staff',
   tag:'Housing network',desc:'Recovery residence partners manage houses and beds, and admit VRCC participants as residents — with intake carried over automatically.',
   peek:'Porch lights on a row of recovery houses; a bed board on the wall.',
   inside:['Houses & beds','Admit residents','Intake packet'],
@@ -125,7 +125,16 @@ const ROOMS=[
    {i:'📅',t:'Upcoming',d:'See what’s happening across the community.'},
    {i:'💼',t:'Jobs & workshops',d:'Career, skills, and learning opportunities.'},
    {i:'✅',t:'RSVP',d:'Count yourself in with one tap.'}]},
- {id:'staff',name:'Staff & Volunteer Area',ico:'🗝️',accent:'#5c6b7a',side:'R',page:'StaffOperations',
+ {id:'admin',name:'Admin Office',ico:'🗂️',accent:'#0f766e',side:'R',page:'AccountApprovals',access:'admin',
+  tag:'Super Admin',desc:'Approve coach, navigator, and organization accounts, and oversee access across the community.',
+  peek:'A quiet office where access is granted and the community is kept safe.',
+  inside:['Approvals','Roles','Oversight'],
+  quote:'“Trust is given carefully and held with care.”',
+  cards:[
+   {i:'✅',t:'Approvals',d:'Approve or decline pending coach, navigator, and organization accounts.'},
+   {i:'🛡️',t:'Roles',d:'See who holds which access across the VRCC.'},
+   {i:'🗝️',t:'Oversight',d:'Super admins govern access; orgs administer their own areas.'}]},
+ {id:'staff',name:'Staff & Volunteer Area',ico:'🗝️',accent:'#5c6b7a',side:'R',page:'StaffOperations',access:'staff',
   tag:'Staff',desc:'For coaches, volunteers, and operators — house operations behind the scenes.',
   peek:'Coach & volunteer workspace — alerts, screens, incidents, and coordination.',
   inside:['Alerts','Drug screens','Incidents','House meetings'],
@@ -509,8 +518,36 @@ const DESK_OPTS=[
  {i:'🆘',t:'I need urgent help right now',d:'If you’re in crisis, call or text 988 (Suicide & Crisis Lifeline) — 24/7. You matter.',act:'crisis'},
  {i:'👋',t:'I’m brand new here',d:'Welcome! Let’s start in the Welcome & Orientation Room together.',act:'new'}
 ];
+/* ---- role-based access (identity published by React on window.vrccIdentity) ----
+   Defined before KIOSK_TABS so its Directory mapping can call roomLocked() at
+   load without hitting a temporal-dead-zone on ACCESS_MIN. */
+const ACCESS_MIN={all:0,participant:0,staff:1,navigator:2,admin:3,super:5};
+function identity(){ return window.vrccIdentity || {role:'guest',rank:0,identified:false}; }
+function roomLocked(r){ return (ACCESS_MIN[r.access||'all']||0) > (identity().rank||0); }
+function accessMsg(r){
+  if((r.access)==='admin') return '🗂️ The <em>Admin Office</em> is for GFA super admins and approved organization admins.';
+  return '🗝️ The <em>'+r.name+'</em> is for approved coaches and navigators. '+(identity().pending?'Your account is pending approval — it unlocks automatically once approved.':'Everything else in the building is yours.');
+}
+// Re-lock hallway doors + directory whenever identity changes.
+function refreshAccess(){
+  document.querySelectorAll('.hdoor').forEach(d=>{
+    const r=d._room; if(!r)return;
+    const locked=roomLocked(r);
+    d.classList.toggle('locked',locked);
+    d.setAttribute('aria-label',(locked?'Restricted: ':'Enter ')+r.name+'. '+r.peek);
+  });
+  document.querySelectorAll('#dirWall li[data-room]').forEach(li=>{
+    const r=ROOMS.find(x=>x.id===li.dataset.room); if(!r)return;
+    li.classList.toggle('locked',roomLocked(r));
+  });
+  const chip=document.querySelector('#whoami'); if(chip){ const id=identity();
+    chip.textContent=id.identified?('You: '+id.role+(id.pending?' · pending':'')):'Sign in';
+  }
+}
+window.addEventListener('vrcc:identity',refreshAccess);
+
 const KIOSK_TABS={
- 'Directory':ROOMS.map(r=>({b:r.ico+' '+r.name,s:r.tag,go:r.locked?null:r.id,label:r.locked?'Staff only':'Walk there →'})),
+ 'Directory':ROOMS.map(r=>({b:r.ico+' '+r.name,s:r.tag,go:roomLocked(r)?null:r.id,label:roomLocked(r)?'Staff only':'Walk there →'})),
  'Check-in':[
   {b:'🌅 Today’s Practice',s:'Recovering the Mind · chosen for today',go:null,label:'Basement →',scene:'basement'},
   {b:'☀️ Daily check-in',s:'30 seconds · private to you',go:'checkin',label:'Open →'},
@@ -624,8 +661,9 @@ $$('[data-close]').forEach(b=>b.addEventListener('click',closePanels));
 /* build: lobby */
 (function(){
   const dw=$('#dirWall');
-  ROOMS.forEach(r=>{const li=document.createElement('li');
-    li.innerHTML=`<i style="background:${r.accent}"></i>${r.name}${r.locked?' 🔒':''}`;dw.appendChild(li);});
+  ROOMS.forEach(r=>{const li=document.createElement('li');li.dataset.room=r.id;
+    li.innerHTML=`<i style="background:${r.accent}"></i>${r.name} <span class="lk">🔒</span>`;
+    li.classList.toggle('locked',roomLocked(r));dw.appendChild(li);});
   [['#dust',22],['#dustRoom',16]].forEach(([sel,n])=>{const d=$(sel);if(!d)return;
     for(let i=0;i<n;i++){const m=document.createElement('i');m.className='mote';
       m.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*70}%;--md:${10+Math.random()*12}s;--mx:${-40+Math.random()*80}px;--my:${40+Math.random()*90}px;animation-delay:-${Math.random()*12}s`;
@@ -637,8 +675,9 @@ $$('[data-close]').forEach(b=>b.addEventListener('click',closePanels));
   const L=$('#hallLeft'),R=$('#hallRight');
   ROOMS.forEach(r=>{
     const d=document.createElement('div');
-    d.className='hdoor'+(r.locked?' locked':'');d.tabIndex=0;d.setAttribute('role','button');
-    d.setAttribute('aria-label',(r.locked?'Restricted: ':'Enter ')+r.name+'. '+r.peek);
+    d._room=r;
+    d.className='hdoor'+(roomLocked(r)?' locked':'');d.tabIndex=0;d.setAttribute('role','button');
+    d.setAttribute('aria-label',(roomLocked(r)?'Restricted: ':'Enter ')+r.name+'. '+r.peek);
     d.style.setProperty('--rc',r.accent);d.dataset.room=r.id;
     d.innerHTML=`<div class="slab">
       <div class="window"><div class="warm"></div>
@@ -659,10 +698,11 @@ $$('[data-close]').forEach(b=>b.addEventListener('click',closePanels));
 
 const peek=$('#peek');
 function showPeek(r,el){
-  peek.innerHTML=`<div class="p-eyebrow">${r.tag} ${r.locked?'· 🔒 restricted':''}</div>
+  const lk=roomLocked(r);
+  peek.innerHTML=`<div class="p-eyebrow">${r.tag} ${lk?'· 🔒 restricted':''}</div>
     <h4>${r.ico} ${r.name}</h4><p>${r.peek}</p>
     <div class="p-inside">${r.inside.map(x=>`<span>${x}</span>`).join('')}</div>
-    <div class="p-cta">${r.locked?'Sign-in required':'Click the door to enter →'}</div>`;
+    <div class="p-cta">${lk?'Approved staff only':'Click the door to enter →'}</div>`;
   const b=el.getBoundingClientRect();
   let x=Math.min(Math.max(b.left+b.width/2-142,12),innerWidth-296);
   let y=b.top-14-peek.offsetHeight; if(y<70)y=b.bottom+14;
@@ -673,7 +713,7 @@ function hidePeek(){peek.classList.remove('show');peek.setAttribute('aria-hidden
 
 /* rooms — bridges to the live React page via a window event */
 function enterRoom(r){
-  if(r.locked){toast('🗝️ The <em>Staff & Volunteer Area</em> is restricted. Coaches and volunteers sign in here — everyone else, the whole rest of the building is yours.');return;}
+  if(roomLocked(r)){toast(accessMsg(r));return;}
   currentRoom=r;
   const sc=$('#scene-room');
   sc.style.setProperty('--room-accent',r.accent);
@@ -859,8 +899,18 @@ function rtmApplyRenew(){
 })();
 
 /* wiring */
-$('#frontDoor').addEventListener('click',()=>{ $('#frontDoor').classList.add('opening');
-  setTimeout(()=>{go('lobby','forward');setTimeout(()=>$('#frontDoor').classList.remove('opening'),1000);},420);});
+let entering=false;
+$('#frontDoor').addEventListener('click',()=>{
+  if(entering||current!=='arrival')return; entering=true;
+  const th=$('#threshold'), door=$('#frontDoor');
+  door.classList.add('opening');                                   // the door swings open (~1.15s)
+  setTimeout(()=>{ th&&th.classList.add('show'); },950);           // step across the threshold → into darkness
+  setTimeout(()=>{ go('lobby','forward'); },1700);                 // arrive in the lobby, hidden behind the black
+  setTimeout(()=>{ th&&th.classList.remove('show'); door.classList.remove('opening'); },2050); // the lobby fades up
+  setTimeout(()=>{ entering=false;
+    window.dispatchEvent(new CustomEvent('vrcc:entered-building')); // now ask who they are
+  },2750);
+});
 $('#frontDoor').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('#frontDoor').click();}});
 $$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go,b.dataset.dir||'forward')));
 const wire=(id,fn)=>{const el=$(id);el.addEventListener('click',fn);
@@ -872,6 +922,7 @@ wire('#exitLobby',()=>go('arrival','back'));
 wire('#gardenGate',()=>go('city','forward'));
 $('#backBtn').addEventListener('click',goBack);
 $('#safeExit').addEventListener('click',()=>window.location.replace('https://weather.com'));
+$('#whoami').addEventListener('click',()=>{ if(window.vrccOpenOnboarding)window.vrccOpenOnboarding(); });
 
 document.addEventListener('keydown',e=>{
   if(e.target.matches('input,textarea'))return;
@@ -929,3 +980,4 @@ $('#soundBtn').addEventListener('click',()=>{
 });
 
 syncHUD();
+refreshAccess();
