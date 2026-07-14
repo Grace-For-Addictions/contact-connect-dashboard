@@ -580,7 +580,7 @@ const SCENE_META={
  landing:{label:'Grace For Addictions',hint:''},
  arrival:{label:'Outside the VRCC · dusk',hint:'Click the <b>front door</b> to come in — or press <kbd>Enter</kbd>'},
  lobby:{label:'The Lobby',hint:'<kbd>D</kbd> Front Desk · <kbd>K</kbd> Kiosk · <kbd>H</kbd> Hallway · <kbd>Esc</kbd> back'},
- hallway:{label:'Main Hallway',hint:'Hover a door to <b>peek through the window</b> · click to enter · <kbd>Esc</kbd> lobby'},
+ hallway:{label:'Main Hallway',hint:'Click a <b>window</b> to look inside · click the <b>door</b> to enter · <kbd>Esc</kbd> lobby'},
  room:{label:'Room',hint:'<kbd>Esc</kbd> back to the hallway'},
  basement:{label:'Recovering the Mind',hint:'Pick a <b>movement</b> · flip the card · switch <b>reflection modes</b> · <kbd>Esc</kbd> upstairs'},
  garden:{label:'Community Garden',hint:'Walk through the <b>gates</b> to reach the Des Moines map · <kbd>Esc</kbd> inside'},
@@ -691,8 +691,12 @@ $$('[data-close]').forEach(b=>b.addEventListener('click',closePanels));
     d.addEventListener('focus',()=>showPeek(r,d));
     d.addEventListener('mouseleave',hidePeek);
     d.addEventListener('blur',hidePeek);
-    d.addEventListener('click',()=>enterRoom(r));
-    d.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();enterRoom(r);}});
+    // Click the WINDOW → pull up a preview of what's inside; click the DOOR → enter.
+    d.addEventListener('click',e=>{ hidePeek(); if(e.target.closest('.window')) openPreview(r); else enterRoom(r); });
+    d.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();enterRoom(r);}
+      if(e.key==='p'||e.key==='P'){e.preventDefault();openPreview(r);} // keyboard: preview
+    });
   });
 })();
 
@@ -710,6 +714,35 @@ function showPeek(r,el){
   peek.classList.add('show'); peek.setAttribute('aria-hidden','false');
 }
 function hidePeek(){peek.classList.remove('show');peek.setAttribute('aria-hidden','true');}
+
+/* window preview — "pull up on the screen" a look inside the room */
+function openPreview(r){
+  const lk=roomLocked(r);
+  let pv=document.getElementById('roomPreview');
+  if(!pv){ pv=document.createElement('div'); pv.id='roomPreview'; pv.className='panel'; document.body.appendChild(pv); }
+  pv.style.setProperty('--rc',r.accent);
+  pv.innerHTML=`
+    <button class="pv-x" aria-label="Close preview">✕</button>
+    <div class="pv-window"><div class="pv-glow"></div>
+      <div class="pv-scene">${r.cards.slice(0,4).map(c=>`<span class="pv-ob">${c.i}</span>`).join('')}</div>
+      <div class="pv-name">${r.ico} ${r.name}</div>
+    </div>
+    <div class="pv-body">
+      <div class="pv-eyebrow">${r.tag}${lk?' · 🔒 restricted':''}</div>
+      <p class="pv-desc">${r.desc}</p>
+      <div class="pv-inside">${r.inside.map(x=>`<span>${x}</span>`).join('')}</div>
+      <div class="pv-cards">${r.cards.map(c=>`<div class="pv-card"><span class="pv-ci">${c.i}</span><b>${c.t}</b><i>${c.d}</i></div>`).join('')}</div>
+      <div class="pv-quote">“${r.quote}”</div>
+      ${lk
+        ? `<div class="pv-locked">${accessMsg(r).replace(/<\/?em>/g,'')}</div>`
+        : `<button class="pv-enter">Enter ${r.name} →</button>`}
+    </div>`;
+  $('#scrim').classList.add('show'); pv.classList.add('show');
+  pv.querySelector('.pv-x').onclick=closePanels;
+  const enter=pv.querySelector('.pv-enter');
+  if(enter)enter.onclick=()=>{ closePanels(); enterRoom(r); };
+}
+window.vrccPreview=id=>{const r=ROOMS.find(x=>x.id===id);if(r)openPreview(r);};
 
 /* rooms — bridges to the live React page via a window event */
 function enterRoom(r){

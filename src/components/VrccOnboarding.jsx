@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { isSuperAdmin, setIdentity, getIdentity, isPending } from '@/lib/identity';
-import { UserRound, HeartHandshake, Building2, Users, ArrowLeft, CheckCircle2, Clock, Sparkles, ShieldCheck } from 'lucide-react';
+import { UserRound, HeartHandshake, Building2, Users, ArrowLeft, CheckCircle2, Clock, Sparkles, ShieldCheck, LogIn } from 'lucide-react';
 
 /**
  * VrccOnboarding — the "who are you here as?" gate.
@@ -65,6 +65,15 @@ export default function VrccOnboarding() {
     return p;
   }
 
+  // Persist best-effort: if the DB write fails (offline, migration not run yet),
+  // fall back to the local payload so identity + RBAC still work. A super admin
+  // is always recognized from their email, never dependent on a DB round-trip.
+  async function persist(payload) {
+    let row = null;
+    try { row = await db.entities.Account.create(payload); } catch { /* fall through */ }
+    return row || { ...payload };
+  }
+
   async function submit(role) {
     setBusy(true);
     try {
@@ -76,39 +85,39 @@ export default function VrccOnboarding() {
       }
       const superA = isSuperAdmin(email);
       const name = [f.first_name, f.last_name].filter(Boolean).join(' ').trim();
-      const base = { email, created_by: 'onboarding' };
+      const base = { email, created_by: 'onboarding', is_super_admin: superA };
       let created;
 
       if (role === 'participant') {
         const p = await ensureParticipant(email, name || 'Participant');
-        created = await db.entities.Account.create({
+        created = await persist({
           ...base, first_name: f.first_name, last_name: f.last_name, dob: f.dob || null,
           role: 'participant', is_resident: !!f.resident, residence_id: f.resident ? f.house_id || null : null,
-          participant_id: p.id, approval_status: 'approved',
+          participant_id: p?.id || null, approval_status: 'approved',
         });
         if (f.resident && f.house_id) {
           const house = houses.find((h) => h.id === f.house_id);
           await db.entities.RrResident.create({
             house_id: f.house_id, residence_id: house?.residence_id || null,
-            participant_id: p.id, participant_name: name, status: 'applicant',
+            participant_id: p?.id || null, participant_name: name, status: 'applicant',
             intake_complete: false, created_by: 'self-onboard',
           });
         }
       } else if (role === 'coach') {
         const p = await ensureParticipant(email, name || 'Coach');
-        created = await db.entities.Account.create({
+        created = await persist({
           ...base, first_name: f.first_name, last_name: f.last_name, dob: f.dob || null,
-          role: 'coach', is_navigator: !!f.navigator, participant_id: p.id,
-          approval_status: superA ? 'approved' : 'pending', is_super_admin: superA,
+          role: 'coach', is_navigator: !!f.navigator, participant_id: p?.id || null,
+          approval_status: superA ? 'approved' : 'pending',
         });
       } else if (role === 'organization') {
-        created = await db.entities.Account.create({
+        created = await persist({
           ...base, org_name: f.org_name, first_name: f.first_name, last_name: f.last_name,
           org_types: f.org_types, role: 'organization',
-          approval_status: superA ? 'approved' : 'pending', is_super_admin: superA,
+          approval_status: superA ? 'approved' : 'pending',
         });
       } else { // supporter
-        created = await db.entities.Account.create({
+        created = await persist({
           ...base, first_name: f.first_name, last_name: f.last_name, role: 'supporter',
           relationship: f.relationship, invited_by: (f.supporting || '').trim().toLowerCase() || null,
           approval_status: 'approved',
@@ -117,6 +126,28 @@ export default function VrccOnboarding() {
       finalize(created);
     } catch (e) {
       window.vrccToast?.('Something went wrong saving your info. Please try again.');
+      setBusy(false);
+    }
+  }
+
+  // Sign in — look up an existing account by email (no password yet; magic-link
+  // is the connect-point). Super admins are recognized even without a DB row.
+  async function signIn() {
+    setBusy(true);
+    try {
+      const email = (f.email || '').trim().toLowerCase();
+      if (!email) { setBusy(false); return; }
+      const existing = (await db.entities.Account.filter({ email }))?.[0];
+      if (existing) return finalize(existing);
+      if (isSuperAdmin(email)) {
+        // First-time super admin sign-in with no stored row yet — create one.
+        const acct = await persist({ email, role: 'coach', is_navigator: true, is_super_admin: true, approval_status: 'approved', created_by: 'signin' });
+        return finalize(acct);
+      }
+      setBusy(false);
+      setStep('notfound');
+    } catch {
+      window.vrccToast?.('Could not sign in right now. Please try again.');
       setBusy(false);
     }
   }
@@ -144,7 +175,12 @@ export default function VrccOnboarding() {
         {step === 'role' && (
           <>
             <Header eyebrow="Welcome to the VRCC" title="Who are you here as?" sub="Pick what fits best. You can always change this later — there's no wrong answer." />
-            <div className="grid sm:grid-cols-2 gap-3 mt-5">
+            <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-teal-200 bg-teal-50 px-4 py-3">
+              <div className="text-sm text-teal-900"><b>Already have an account?</b> Welcome back.</div>
+              <Button className="bg-teal-600 hover:bg-teal-700 h-9" onClick={() => setStep('signin')}><LogIn className="w-4 h-4 mr-1" /> Sign in</Button>
+            </div>
+            <div className="text-xs text-slate-400 text-center mt-4 mb-1">New here? Choose how you'd like to join:</div>
+            <div className="grid sm:grid-cols-2 gap-3 mt-1">
               {ROLES.map((r) => {
                 const Icon = r.icon;
                 return (
@@ -159,6 +195,29 @@ export default function VrccOnboarding() {
             </div>
             <button onClick={skip} className="mt-5 text-sm text-slate-400 hover:text-slate-600 mx-auto block">I'm just exploring for now →</button>
           </>
+        )}
+
+        {step === 'signin' && (
+          <>
+            <Header eyebrow="Welcome back" title="Sign in" sub="Enter the email you used before and we'll bring you right back to where you belong." />
+            <div className="mt-5">
+              <Label className="text-xs text-slate-500">Email</Label>
+              <Input className="mt-1" type="email" value={f.email} onChange={(e) => set('email', e.target.value)}
+                placeholder="you@example.com" onKeyDown={(e) => { if (e.key === 'Enter' && f.email) signIn(); }} />
+            </div>
+            <Button className="w-full mt-5 h-11 bg-teal-600 hover:bg-teal-700" disabled={!f.email || busy} onClick={signIn}>
+              {busy ? 'Signing in…' : 'Sign in'}
+            </Button>
+            <button onClick={() => setStep('role')} className="mt-4 text-sm text-slate-400 hover:text-slate-600 mx-auto block">
+              Don't have an account? Create one →
+            </button>
+          </>
+        )}
+
+        {step === 'notfound' && (
+          <Confirm icon={UserRound} color="#b45309" title="We couldn't find that account"
+            body={`No account is registered to ${(f.email || '').trim().toLowerCase()} on this project yet. You can create one in a few seconds.`}
+            cta="Create an account" onDone={() => setStep('role')} />
         )}
 
         {step === 'participant' && (
