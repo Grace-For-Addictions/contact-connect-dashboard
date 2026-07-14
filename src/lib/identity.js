@@ -17,23 +17,14 @@
 
 export const SUPER_ADMIN_EMAILS = [
   'connect@graceforaddictions.org',
-  'connect@graceforaddictions.com',
   'degarmeaux@rcoiowa.org',
-];
-
-// Also match by pattern so a super admin is recognized regardless of the exact
-// TLD they sign up with (connect@graceforaddictions.* is always a super admin).
-const SUPER_ADMIN_PATTERNS = [
-  /^connect@graceforaddictions\.[a-z.]+$/i,
-  /^degarmeaux@rcoiowa\.org$/i,
 ];
 
 const LS_KEY = 'vrcc_identity';
 
 export function isSuperAdmin(email) {
   if (!email) return false;
-  const e = String(email).trim().toLowerCase();
-  return SUPER_ADMIN_EMAILS.includes(e) || SUPER_ADMIN_PATTERNS.some((re) => re.test(e));
+  return SUPER_ADMIN_EMAILS.includes(String(email).trim().toLowerCase());
 }
 
 /* ---- effective role: what this account can actually do right now ---- */
