@@ -24,7 +24,12 @@ import {
   TrendingUp,
   Sparkles,
   Home,
-  ShieldAlert
+  ShieldAlert,
+  Sprout,
+  Star,
+  MessagesSquare,
+  CalendarDays,
+  Pill
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -78,6 +83,17 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Referrals', page: 'Referrals', icon: Compass },
     { name: 'Recovery Residences', page: 'RecoveryResidences', icon: Home },
     { name: 'Staff Operations', page: 'StaffOperations', icon: ShieldAlert },
+    {
+      name: 'VRCC Community',
+      icon: Sparkles,
+      children: [
+        { name: 'BARC-10 Assessment', page: 'BARC10' },
+        { name: 'Walls of Honor', page: 'WallsOfHonor' },
+        { name: 'Safe Chat Rooms', page: 'CommunityRooms' },
+        { name: 'Events Wall', page: 'EventsWall' },
+        { name: 'Narcan Tracking', page: 'NarcanTracking' },
+      ]
+    },
     { name: 'Resources', page: 'CommunityResources', icon: Heart },
     { name: 'Progress Reviews', page: 'ProgressReviews', icon: FileText },
     { name: 'Coach Training', page: 'CoachTraining', icon: Sparkles },

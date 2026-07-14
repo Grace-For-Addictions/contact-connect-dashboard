@@ -98,6 +98,12 @@ const TABLE = {
   DrugScreen: 'drug_screens',
   Incident: 'incidents',
   HouseMeeting: 'house_meetings',
+  Barc10Assessment: 'barc10_assessments',
+  HonorPost: 'honor_posts',
+  NarcanLog: 'narcan_logs',
+  CommunityEvent: 'community_events',
+  EventRsvp: 'event_rsvps',
+  RoomMessage: 'room_messages',
 };
 
 // Base44 sort strings: 'field' (asc) or '-field' (desc).
