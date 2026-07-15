@@ -1,9 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { db } from '@/api/client';
 import { useMutation } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { HeartHandshake, CheckCircle2, Sparkles } from 'lucide-react';
+import { HeartHandshake, CheckCircle2, Sparkles, Save, RotateCcw } from 'lucide-react';
 import { LK } from '@/lib/lookups';
 import { getIdentity } from '@/lib/identity';
 
@@ -11,9 +11,12 @@ import { getIdentity } from '@/lib/identity';
  * Intake — Contact Connect participant intake.
  * A person-first, mostly-optional intake. Only name, county, date of birth,
  * intake date, and a consent choice are required. Prefills from the signed-in
- * identity. Saves a participant (find-or-create) and a participant_intakes row.
+ * identity. Resumable + editable: an in-progress intake can be saved and picked
+ * back up (or corrected after submitting) — it is never stuck. Saves a
+ * participant (find-or-create) and upserts a participant_intakes row.
  */
 const today = () => format(new Date(), 'yyyy-MM-dd');
+const FIELDS = ['first_name', 'middle_name', 'last_name', 'preferred_name', 'pronouns', 'date_of_birth', 'gender_identity', 'race', 'sexual_orientation', 'phone', 'email', 'address1', 'address2', 'city', 'county', 'state', 'zipcode', 'country', 'intake_date', 'referral_source', 'active_status', 'drug_of_choice', 'housing_status', 'transportation_access', 'custody_status', 'assigned_coach', 'emergency_contact_name', 'emergency_contact_relationship', 'emergency_contact_phone', 'intake_notes', 'dua_consent'];
 
 export default function Intake() {
   const acct = getIdentity();
@@ -28,6 +31,8 @@ export default function Intake() {
   }));
   const [errors, setErrors] = useState({});
   const [done, setDone] = useState(false);
+  const [intakeId, setIntakeId] = useState(null);
+  const [resuming, setResuming] = useState(false);
   const set = (k, v) => setF((s) => ({ ...s, [k]: v }));
 
   const age = useMemo(() => {
@@ -38,18 +43,43 @@ export default function Intake() {
     return a >= 0 && a < 130 ? a : '';
   }, [f.date_of_birth]);
 
-  const submit = useMutation({
-    mutationFn: async () => {
-      const email = (f.email || '').trim().toLowerCase();
+  // Resume an existing intake for this person so a half-finished one is never lost.
+  useEffect(() => {
+    const email = (acct?.email || '').trim().toLowerCase();
+    if (!email) return;
+    (async () => {
+      const rows = await db.entities.ParticipantIntake.filter({ email });
+      if (rows && rows.length) {
+        const latest = rows.slice().sort((a, b) => String(b.created_date || '').localeCompare(String(a.created_date || '')))[0];
+        setIntakeId(latest.id);
+        setResuming(true);
+        setF((s) => { const n = { ...s }; FIELDS.forEach((k) => { if (latest[k] != null && latest[k] !== '') n[k] = latest[k]; }); return n; });
+      }
+    })();
+  }, []); // eslint-disable-line
+
+  // Create-or-update the intake row. ensureParticipant links a participant on submit.
+  async function upsertIntake(ensureParticipant) {
+    const email = (f.email || '').trim().toLowerCase();
+    const payload = { ...f, email, age: age || null, account_id: acct?.id || null, created_by: 'intake' };
+    if (ensureParticipant) {
       const name = [f.preferred_name || f.first_name, f.last_name].filter(Boolean).join(' ').trim();
-      let p = null;
-      if (email) p = (await db.entities.Participant.filter({ email }))?.[0] || null;
+      let p = email ? (await db.entities.Participant.filter({ email }))?.[0] : null;
       if (!p) p = await db.entities.Participant.create({ full_name: name, email, status: f.active_status || 'Active', county: f.county, created_by: 'intake' });
-      await db.entities.ParticipantIntake.create({
-        ...f, email, age: age || null, participant_id: p?.id || null, account_id: acct?.id || null, created_by: 'intake',
-      });
-      return p;
-    },
+      if (p?.id) payload.participant_id = p.id;
+    }
+    if (intakeId) { await db.entities.ParticipantIntake.update(intakeId, payload); return intakeId; }
+    const row = await db.entities.ParticipantIntake.create(payload);
+    if (row?.id) setIntakeId(row.id);
+    return row?.id;
+  }
+
+  const saveDraft = useMutation({
+    mutationFn: () => upsertIntake(false),
+    onSuccess: () => { setResuming(true); window.vrccToast?.('Draft saved — you can come back and finish anytime.'); },
+  });
+  const submit = useMutation({
+    mutationFn: () => upsertIntake(true),
     onSuccess: () => { setDone(true); window.scrollTo?.({ top: 0, behavior: 'smooth' }); },
   });
 
@@ -84,6 +114,12 @@ export default function Intake() {
         <div className="flex items-center gap-2 text-amber-600 font-semibold text-xs tracking-widest uppercase"><HeartHandshake className="w-4 h-4" /> Contact Connect · Participant Intake</div>
         <h1 className="text-3xl font-bold text-slate-800 mt-1">Begin with grace</h1>
         <p className="text-slate-500 mt-1">There's no wrong way to start. Share what you're comfortable sharing — only a few fields are required.</p>
+
+        {resuming && (
+          <div className="mt-4 flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+            <RotateCcw className="w-4 h-4 flex-shrink-0" /> We found your saved intake and loaded it here — pick up right where you left off, or update anything.
+          </div>
+        )}
 
         <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 md:p-8 space-y-8">
           <Section n="1" title="Who you are" sub="Your name and identity, in your words.">
@@ -157,8 +193,11 @@ export default function Intake() {
           </Section>
 
           <div className="flex items-center gap-3 flex-wrap pt-2">
-            <Button className="bg-amber-600 hover:bg-amber-700 h-11 px-6" disabled={submit.isPending} onClick={onSubmit}>
-              {submit.isPending ? 'Submitting…' : 'Submit intake'}
+            <Button className="bg-amber-600 hover:bg-amber-700 h-11 px-6" disabled={submit.isPending || saveDraft.isPending} onClick={onSubmit}>
+              {submit.isPending ? 'Submitting…' : intakeId ? 'Save & submit intake' : 'Submit intake'}
+            </Button>
+            <Button variant="outline" className="h-11" disabled={saveDraft.isPending || submit.isPending} onClick={() => saveDraft.mutate()}>
+              <Save className="w-4 h-4 mr-1" /> {saveDraft.isPending ? 'Saving…' : 'Save & finish later'}
             </Button>
             <span className="text-xs text-slate-400">Fields marked <span className="text-rose-500">*</span> are required</span>
           </div>
