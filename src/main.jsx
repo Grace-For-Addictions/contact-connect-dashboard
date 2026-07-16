@@ -7,6 +7,7 @@ import ResidenceApply from '@/pages/ResidenceApply'
 import DailyCheckIn from '@/pages/DailyCheckIn'
 import VrccOnboarding from '@/components/VrccOnboarding'
 import MvpApp from '@/mvp/MvpApp'
+import Landing from '@/mvp/Landing'
 import { getIdentity, syncWindow } from '@/lib/identity'
 import '@/index.css'
 
@@ -32,6 +33,10 @@ if (params.has('apply')) {
   mountFullScreen('apply-root', <ResidenceApply />)
 } else if (params.has('checkin')) {
   mountFullScreen('checkin-root', <DailyCheckIn />)
+} else if (params.has('app')) {
+  // The working coach↔participant app.
+  document.body.classList.add('mvp-mode')
+  mountFullScreen('mvp-root', <MvpApp />)
 } else if (params.has('explore')) {
   // Immersive VRCC building (opt-in via ?explore). The shell (index.html +
   // /vrcc-*.js) owns spatial navigation; React mounts the live page behind
@@ -47,10 +52,10 @@ if (params.has('apply')) {
     <QueryClientProvider client={queryClientInstance}><VrccOnboarding /></QueryClientProvider>
   )
 } else {
-  // DEFAULT: the working coach↔participant app. This is where participants and
-  // coaches land, sign in, and do real work. The immersive VRCC is at ?explore.
+  // DEFAULT: the branded front door. Two clear pathways — "Get started" opens
+  // the app (?app), "Explore the VRCC" opens the immersive world (?explore).
   document.body.classList.add('mvp-mode')
-  mountFullScreen('mvp-root', <MvpApp />)
+  mountFullScreen('landing-root', <Landing />)
 }
 
 if (import.meta.hot) {

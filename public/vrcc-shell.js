@@ -608,6 +608,13 @@ const SCENE_META={
  city:{label:'Des Moines · Digital Twin',hint:'Tap a light on the map · <kbd>Esc</kbd> back to the garden'}
 };
 let current='landing', history=[], currentRoom=null, hintTimer;
+// Reached via ?explore from the branded front door → skip the shell's own
+// landing and start outside the building (arrival).
+if(new URLSearchParams(location.search).has('explore')){
+  current='arrival';
+  document.getElementById('scene-landing')?.classList.remove('active');
+  document.getElementById('scene-arrival')?.classList.add('active');
+}
 
 function go(id,dir='forward',push=true){
   if(id===current)return;
