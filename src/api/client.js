@@ -108,6 +108,9 @@ const TABLE = {
   ParticipantIntake: 'participant_intakes',
   DirectoryEntry: 'directory_entries',
   ConnectionRequest: 'connection_requests',
+  MvpMessage: 'mvp_messages',
+  MvpSessionRequest: 'mvp_session_requests',
+  MvpSession: 'mvp_sessions',
 };
 
 // Base44 sort strings: 'field' (asc) or '-field' (desc).

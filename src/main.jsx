@@ -6,6 +6,7 @@ import RoomHost from '@/shell/RoomHost'
 import ResidenceApply from '@/pages/ResidenceApply'
 import DailyCheckIn from '@/pages/DailyCheckIn'
 import VrccOnboarding from '@/components/VrccOnboarding'
+import MvpApp from '@/mvp/MvpApp'
 import { getIdentity, syncWindow } from '@/lib/identity'
 import '@/index.css'
 
@@ -31,22 +32,25 @@ if (params.has('apply')) {
   mountFullScreen('apply-root', <ResidenceApply />)
 } else if (params.has('checkin')) {
   mountFullScreen('checkin-root', <DailyCheckIn />)
-} else {
-  // The VRCC shell (index.html + /vrcc-*.js) owns spatial navigation; React
-  // mounts the live page behind whichever door the visitor opens.
+} else if (params.has('explore')) {
+  // Immersive VRCC building (opt-in via ?explore). The shell (index.html +
+  // /vrcc-*.js) owns spatial navigation; React mounts the live page behind
+  // whichever door the visitor opens.
   const mount = document.getElementById('react-room')
   if (mount) {
     ReactDOM.createRoot(mount).render(<RoomHost />)
   }
-
-  // The self-identify / onboarding gate lives in its own overlay root so it can
-  // cover the whole building (lobby, hallway, rooms) when the visitor enters.
   const onb = document.createElement('div')
   onb.id = 'onboarding-root'
   document.body.appendChild(onb)
   ReactDOM.createRoot(onb).render(
     <QueryClientProvider client={queryClientInstance}><VrccOnboarding /></QueryClientProvider>
   )
+} else {
+  // DEFAULT: the working coach↔participant app. This is where participants and
+  // coaches land, sign in, and do real work. The immersive VRCC is at ?explore.
+  document.body.classList.add('mvp-mode')
+  mountFullScreen('mvp-root', <MvpApp />)
 }
 
 if (import.meta.hot) {

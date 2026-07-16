@@ -41,14 +41,26 @@ function soil(total) {
     insight: 'Flourishing recovery capital. You are mentor-ready — giving back through peer coaching or a Walls of Honor story strengthens the whole community and your own roots.' };
 }
 
-export default function BARC10() {
+export default function BARC10({ onComplete, prefill } = {}) {
   const qc = useQueryClient();
-  const [step, setStep] = useState('who'); // who | quiz | done
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [step, setStep] = useState(prefill ? 'quiz' : 'who'); // who | quiz | done
+  const [name, setName] = useState(prefill ? [prefill.first_name, prefill.last_name].filter(Boolean).join(' ').trim() : '');
+  const [email, setEmail] = useState(prefill?.email || '');
   const [participant, setParticipant] = useState(null);
   const [answers, setAnswers] = useState(Array(10).fill(null));
   const [result, setResult] = useState(null);
+
+  // When launched as a required step (prefill), resolve the participant up front
+  // so the quiz can submit without the "who are you" screen.
+  React.useEffect(() => {
+    if (!prefill || participant) return;
+    (async () => {
+      const q = prefill.email ? await db.entities.Participant.filter({ email: prefill.email }) : [];
+      let p = q?.[0];
+      if (!p) p = await db.entities.Participant.create({ full_name: name || 'Participant', email: prefill.email, status: 'Active', created_by: 'mvp' });
+      setParticipant(p);
+    })();
+  }, []); // eslint-disable-line
 
   const { data: history = [] } = useQuery({ queryKey: ['barc10'], queryFn: () => db.entities.Barc10Assessment.list('-date') });
 
@@ -77,7 +89,7 @@ export default function BARC10() {
       if (participant?.id) await db.entities.Participant.update(participant.id, { barc10_score: total });
       return { row, s };
     },
-    onSuccess: ({ s }) => { setResult(s); setStep('done'); qc.invalidateQueries({ queryKey: ['barc10'] }); },
+    onSuccess: ({ s }) => { qc.invalidateQueries({ queryKey: ['barc10'] }); if (onComplete) { onComplete(); return; } setResult(s); setStep('done'); },
   });
 
   const reset = () => { setStep('who'); setName(''); setEmail(''); setParticipant(null); setAnswers(Array(10).fill(null)); setResult(null); };

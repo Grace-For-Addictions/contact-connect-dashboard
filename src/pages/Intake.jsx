@@ -18,8 +18,8 @@ import { getIdentity } from '@/lib/identity';
 const today = () => format(new Date(), 'yyyy-MM-dd');
 const FIELDS = ['first_name', 'middle_name', 'last_name', 'preferred_name', 'pronouns', 'date_of_birth', 'gender_identity', 'race', 'sexual_orientation', 'phone', 'email', 'address1', 'address2', 'city', 'county', 'state', 'zipcode', 'country', 'intake_date', 'referral_source', 'active_status', 'drug_of_choice', 'housing_status', 'transportation_access', 'custody_status', 'assigned_coach', 'emergency_contact_name', 'emergency_contact_relationship', 'emergency_contact_phone', 'intake_notes', 'dua_consent'];
 
-export default function Intake() {
-  const acct = getIdentity();
+export default function Intake({ onComplete, prefill } = {}) {
+  const acct = prefill || getIdentity();
   const [f, setF] = useState(() => ({
     first_name: acct?.first_name || '', middle_name: '', last_name: acct?.last_name || '', preferred_name: '',
     pronouns: '', date_of_birth: acct?.dob || '', gender_identity: '', race: '', sexual_orientation: '',
@@ -80,7 +80,7 @@ export default function Intake() {
   });
   const submit = useMutation({
     mutationFn: () => upsertIntake(true),
-    onSuccess: () => { setDone(true); window.scrollTo?.({ top: 0, behavior: 'smooth' }); },
+    onSuccess: () => { if (onComplete) { onComplete(); return; } setDone(true); window.scrollTo?.({ top: 0, behavior: 'smooth' }); },
   });
 
   function validate() {
